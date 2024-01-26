@@ -13,29 +13,42 @@
         <header class="border-b-2 p-4">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold">WPSD - prototype</h1>
-                <!-- Add navigation items here -->
+                <!-- navigation items here -->
             </div>
         </header>
         
-        
+        <!-- main -->
         <main class="flex flex-1">
-            <div class="flex-grow p-4">
+            <div class="flex-grow p-8 w-5/12 ">
                 <!-- file search and list container -->
-                <div class="mb-4">
-                    <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
-                    <div class="border-2 p-4 h-64">File list</div>
+                <div>
+                    <div class="mb-4">
+                        <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                        
+                    </div>
+                    <p class="font-semibold">Files On Device</p>
+                    <div class="pt-4 border-2 p-4 h-64">
+                        <ul class="list-disc space-y-2 pl-4">
+                            <li>File 1</li>
+                            <li>File 2</li>
+                            <!-- More files -->
+                        </ul>
+                    </div>
                 </div>
                 
                 <!-- Upload and Download buttons -->
-                <div class="flex justify-between mt-4">
-                    <button class="border-2 p-2 hover:bg-blue-300">Upload</button>
-                    <button class="border-2 p-2 hover:bg-blue-300">Download</button>
+                <div class="flex justify-left mt-4">
+                    <button class="border-2 p-2 mr-4 hover:bg-blue-300">Upload</button>
+                    <button class="border-2 p-2 mx-4 hover:bg-blue-300">Download</button>
                 </div>
             </div>
 
             <!-- File details column -->
-            <div class="w-1/3 p-4 border-2">
+            <div class="p-4 border-2 w-2/3 ">
                 File details here
+            </div>
+            <div class="w-1/3 p-4 border-2">
+                Device Info
             </div>
         </main>
     </div>
