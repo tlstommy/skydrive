@@ -9,60 +9,35 @@
 </head>
 <body>
     <div class="min-h-screen flex flex-col">
-        <div class="flex flex-1 flex-col sm:flex-row">
-            <nav class="sm:w-32 order-first sm:order-none"></nav>
-            <main class="flex-1">
-                <h1 class="page-title text-3xl md:text-4xl text-center font-bold m-12 ">
-                    WPSD - prototype
-                </h1>
-                
-                <div class="cols-layout grid grid-cols-2 gap-4">
-                    <div class="left-col flex-1 p-8 border-2 min-h-96">
-                        <div class="">
-                            <form class="form">
-                                <div class="file-search-div items-center justify-center text-center">
-                                    <label for="file-search-box">
-                                        Search
-                                        
-                                    </label>
-                                    <input class="file-search-box border-2 border-black w-5/6" name="file-search-box" id="file-search-box" type="search">
-                                </div>
-                                <div class="file-list-div  items-center justify-center text-center">
-                                    file list
-                                    <ul class="file-list">
-
-                                    </ul>
-                                </div>
-                                <div class="file-list-buttons-div flex">
-                                    <div class="file-buttons-group flex flex-items justify-around">
-                                        <div>
-                                            <!-- <input id="fileItem" type="file"/> !-->
-                                        
-                                            <button class="border-2 hover:bg-blue-300" id="fileUploade" type="submit">Upload File</button>
-                                        </div>
-                                        <div>
-                                            
-                                        
-                                            <button class="border-2 hover:bg-blue-300" id="fileDownload" type="submit">Download File</button>
-                                        </div>
-                                    </div>
-                                        
-                                </div>
-                                
-                            </form>
-                        </div>
-                    </div>
-                    <div class="left-col flex-1 p-8 border-2">
-                        col-2
-                    </div>
+        <!-- Header with nav -->
+        <header class="border-b-2 p-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">WPSD - prototype</h1>
+                <!-- Add navigation items here -->
+            </div>
+        </header>
+        
+        
+        <main class="flex flex-1">
+            <div class="flex-grow p-4">
+                <!-- file search and list container -->
+                <div class="mb-4">
+                    <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                    <div class="border-2 p-4 h-64">File list</div>
                 </div>
-                    
                 
+                <!-- Upload and Download buttons -->
+                <div class="flex justify-between mt-4">
+                    <button class="border-2 p-2 hover:bg-blue-300">Upload</button>
+                    <button class="border-2 p-2 hover:bg-blue-300">Download</button>
+                </div>
+            </div>
 
-            </main>
-            
-            <aside class="sm:w-32 hidden sm:block"></aside>
-        </div>
+            <!-- File details column -->
+            <div class="w-1/3 p-4 border-2">
+                File details here
+            </div>
+        </main>
     </div>
 </body>
 </html>
