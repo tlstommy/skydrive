@@ -6,45 +6,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
     <title>WPSD - prototype</title>
+    <style>
+        /* table body*/
+        .scrollable-table-body {
+            display: block;
+            max-height: 24em; 
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+
+        /*make cols of same width for header and body*/
+        .table-header table, .scrollable-table-body table {
+            width: 100%;
+            table-layout: fixed; 
+        }
+
+        /*set  width for each col*/
+        .name-col {
+            width: 50%;
+            text-align: left;
+        }
+
+        .size-col {
+            width: 20%;
+            text-align: left; 
+        }
+
+        .date-col {
+            width: 30%;
+            text-align: left; 
+        }
+
+    </style>
+    <script>
+        window.onload = function() {
+            var fileList = document.getElementById('fileList');
+            var fileDetails = document.getElementById('fileDetails');
+        
+            function updateFileDetails(fileName) {
+                console.log(fileName)
+            }
+        
+            fileList.addEventListener('click', function(e) {
+                if(e.target && e.target.nodeName === "LI") {
+                    var items = fileList.getElementsByTagName("li");
+                    for (var i = 0; i < items.length; ++i) {
+                        items[i].classList.remove('bg-blue-100');
+                    }
+                    e.target.classList.add('bg-blue-100');
+                    updateFileDetails(e.target.textContent);
+                }
+            });
+        };
+    </script>
 </head>
 <body>
     <div class="min-h-screen flex flex-col">
-        <!-- Header with nav -->
         <header class="border-b-2 p-4">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold">WPSD - prototype</h1>
-                <!-- navigation items here -->
             </div>
         </header>
-        
-        <!-- main -->
         <main class="flex flex-1">
-            <div class="flex-grow p-8 w-5/12 ">
-                <!-- file search and list container -->
+            <div class="p-8 w-2/3">
                 <div>
                     <div class="mb-4">
                         <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
-                        
                     </div>
-                    <p class="font-semibold">Files On Device</p>
-                    <div class="pt-4 border-2 p-4 h-64">
-                        <ul class="list-disc space-y-2 pl-4">
-                            <li>File 1</li>
-                            <li>File 2</li>
-                            <!-- More files -->
-                        </ul>
+                    <div class="flex flex-col w-full">
+                        <p class="font-semibold mb-4">Files On Device</p>
+                        
+                        <!-- Table header -->
+                        <div class="table-header">
+                            <table>
+                                <thead class="">
+                                    <tr>
+                                        <th class="name-col">
+                                            Name
+                                        </th>
+                                        <th class="size-col">
+                                            File Size
+                                        </th>
+                                        <th class="date-col">
+                                            Last Modified
+                                        </th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        
+                        <!-- Scrollable table body -->
+                        <div class="scrollable-table-body">
+                            <table class="table-body">
+                                <tbody>
+                                    <!-- files from flask file_list -->
+                                    {% for file in file_list %}
+                                    <tr>
+                                        <td class="truncate ... name-col" title="{{ file.name }}"><p class="text-nowrap text-clip overflow-hidden ...">{{ file.name }}</p></td>
+                                        <td class="size-col">{{ file.size }}</td>
+                                        <td class="date-col">{{ file.last_modified }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Upload and Download buttons -->
                 <div class="flex justify-left mt-4">
                     <button class="border-2 p-2 mr-4 hover:bg-blue-300">Upload</button>
                     <button class="border-2 p-2 mx-4 hover:bg-blue-300">Download</button>
                 </div>
             </div>
 
-            <!-- File details column -->
-            <div class="p-4 border-2 w-2/3 ">
+            <div class="p-4 border-2 w-1/3">
                 File details here
             </div>
             <div class="w-1/3 p-4 border-2">
