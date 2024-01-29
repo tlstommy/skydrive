@@ -37,24 +37,38 @@
             text-align: left; 
         }
 
+        .selected {
+            background-color: #0000ff; /* Change this color to whatever you prefer */
+        }
+
     </style>
     <script>
         window.onload = function() {
             var fileList = document.getElementById('fileList');
-            var fileDetails = document.getElementById('fileDetails');
         
-            function updateFileDetails(fileName) {
-                console.log(fileName)
+            function updateFileDetails(fileRow) {
+                // You can update file details based on the clicked row
+                // For now, just logging the file name, size, and last modified date
+                var fileName = fileRow.querySelector(".name-col").textContent;
+                var fileSize = fileRow.querySelector(".size-col").textContent;
+                var fileLastMod = fileRow.querySelector(".date-col").textContent;
+                console.log("File Name: " + fileName);
+                console.log("File Size: " + fileSize);
+                console.log("Last Modified: " + fileLastMod);
             }
         
             fileList.addEventListener('click', function(e) {
-                if(e.target && e.target.nodeName === "LI") {
-                    var items = fileList.getElementsByTagName("li");
-                    for (var i = 0; i < items.length; ++i) {
-                        items[i].classList.remove('bg-blue-100');
+                var targetRow = e.target.closest('tr'); // Get the closest tr parent to ensure we're targeting the row
+                
+                if(targetRow) {
+                    
+                    var rows = fileList.getElementsByTagName("tr");
+                    for (var i = 0; i < rows.length; ++i) {
+                        rows[i].classList.remove('selected');
                     }
-                    e.target.classList.add('bg-blue-100');
-                    updateFileDetails(e.target.textContent);
+                    //add selected class style to clicked row
+                    targetRow.classList.add('selected');
+                    updateFileDetails(targetRow);
                 }
             });
         };
@@ -80,17 +94,19 @@
                         <div class="table-header">
                             <table>
                                 <thead class="">
-                                    <tr>
-                                        <th class="name-col">
-                                            Name
-                                        </th>
-                                        <th class="size-col">
-                                            File Size
-                                        </th>
-                                        <th class="date-col">
-                                            Last Modified
-                                        </th>
-                                    </tr>
+                                    <div>
+                                        <tr>
+                                            <th class="name-col">
+                                                Name
+                                            </th>
+                                            <th class="size-col">
+                                                File Size
+                                            </th>
+                                            <th class="date-col">
+                                                Last Modified
+                                            </th>
+                                        </tr>
+                                    </div>
                                 </thead>
                             </table>
                         </div>
@@ -98,13 +114,15 @@
                         <!-- Scrollable table body -->
                         <div class="scrollable-table-body">
                             <table class="table-body">
-                                <tbody>
+                                <tbody id="fileList">
                                     <!-- files from flask file_list -->
                                     {% for file in file_list %}
                                     <tr>
-                                        <td class="truncate ... name-col" title="{{ file.name }}"><p class="text-nowrap text-clip overflow-hidden ...">{{ file.name }}</p></td>
-                                        <td class="size-col">{{ file.size }}</td>
-                                        <td class="date-col">{{ file.last_modified }}</td>
+                                        <div>
+                                            <td class="text-nowrap text-clip overflow-hidden truncate ... name-col" title="{{ file.name }}" id="file-name-data">{{ file.name }}</td>
+                                            <td class="size-col" id="file-size-data">{{ file.size }}</td>
+                                            <td class="date-col" id="file-lastmod-data">{{ file.last_modified }}</td>
+                                        </div>
                                     </tr>
                                     {% endfor %}
                                     
