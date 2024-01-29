@@ -23,12 +23,12 @@
 
         /*set  width for each col*/
         .name-col {
-            width: 50%;
+            width: 60%;
             text-align: left;
         }
 
         .size-col {
-            width: 20%;
+            width: 10%;
             text-align: left; 
         }
 
@@ -38,7 +38,7 @@
         }
 
         .selected {
-            background-color: #0000ff; /* Change this color to whatever you prefer */
+            background-color: #6969ed; /* Change this color to whatever you prefer */
         }
 
     </style>
@@ -72,6 +72,24 @@
                 }
             });
         };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle file upload
+            document.getElementById('uploadButton').addEventListener('click', function(event) {
+                event.preventDefault();
+                var formData = new FormData(document.getElementById('file-upload-form'));
+                console.log(formData);
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    //loadFileList(); // Reload the file list
+                });
+            });
+        });
+        
     </script>
 </head>
 <body>
@@ -83,7 +101,9 @@
         </header>
         <main class="flex flex-1">
             <div class="p-8 w-2/3">
+                
                 <div>
+                
                     <div class="mb-4">
                         <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
                     </div>
@@ -129,11 +149,23 @@
                                 </tbody>
                             </table>
                         </div>
+                        
                     </div>
+                    <form method="post" enctype=multipart/form-data id="file-upload-form">
+                        <div class="py-8">
+                            
+                            <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                                Upload file(s)
+                            </label>
+                            <input class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" id="multiple_files" type="file" name="file" multiple>
+                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300"  id="uploadButton" type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
+                        </div>
+                    </form>
+                    
                 </div>
                 
                 <div class="flex justify-left mt-4">
-                    <button class="border-2 p-2 mr-4 hover:bg-blue-300">Upload</button>
+                    
                     <button class="border-2 p-2 mx-4 hover:bg-blue-300">Download</button>
                 </div>
             </div>
