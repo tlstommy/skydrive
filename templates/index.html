@@ -73,6 +73,35 @@
             });
         };
 
+        function loadFileList(){
+            fetch('/files')
+            .then(response => response.json())
+            .then(files => {
+                console.log(files);
+                
+                const fileListElement = document.getElementById('fileList');
+                
+                // Clear list
+                fileListElement.innerHTML = '';
+                
+                files.forEach(file => {
+                    const row = document.createElement('tr');
+                    
+                    //set row html
+                    row.innerHTML = 
+                    `
+                        <td class="text-nowrap text-clip overflow-hidden truncate name-col" title="${file.name}">${file.name}</td>
+                        <td class="size-col">${file.size}</td>
+                        <td class="date-col">${file.last_modified}</td>
+                    `;
+                    
+                    //append row
+                    fileListElement.appendChild(row);
+                });
+            });
+        };
+
+
         document.addEventListener('DOMContentLoaded', function() {
             // Handle file upload
             document.getElementById('uploadButton').addEventListener('click', function(event) {
@@ -85,7 +114,7 @@
                 }).then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    //loadFileList(); // Reload the file list
+                    loadFileList(); // Reload the file list
                 });
             });
         });

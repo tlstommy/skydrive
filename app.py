@@ -22,16 +22,25 @@ if(pathExist == False):
 app = Flask(__name__)
 app.config['DEVICE_FILES_FOLDER'] = DEVICE_FILES_FOLDER
 
-#files
-file_list_names = os.listdir(app.config['DEVICE_FILES_FOLDER'])
-file_list = []
 
-for file in os.listdir(app.config['DEVICE_FILES_FOLDER']):
-    stat = os.stat(os.path.join(DEVICE_FILES_FOLDER,file))
 
-    #convert sizes to appropriate units and times from unix
-    dataDict = {'name':file,'size':size(stat.st_size),'last_modified':datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S")}
-    file_list.append(dataDict)
+def getFileList():
+    #files
+    file_list_names = os.listdir(app.config['DEVICE_FILES_FOLDER'])
+    file_list = []
+
+    for file in os.listdir(app.config['DEVICE_FILES_FOLDER']):
+        stat = os.stat(os.path.join(DEVICE_FILES_FOLDER,file))
+
+        #convert sizes to appropriate units and times from unix
+        dataDict = {'name':file,'size':size(stat.st_size),'last_modified':datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S")}
+        file_list.append(dataDict)
+    return file_list
+
+#file list
+@app.route('/files', methods=['GET'])
+def listFiles():
+    return jsonify(getFileList())
 
 
 #upload files to deviceS
@@ -57,7 +66,7 @@ def uploadToDevice():
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/index")
 def index():
-    return render_template("index.html", file_list=file_list)
+    return render_template("index.html", file_list=getFileList())
 
 if __name__ == '__main__':
     app.run(debug=True)
