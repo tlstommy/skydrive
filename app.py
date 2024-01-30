@@ -33,11 +33,12 @@ for file in os.listdir(app.config['DEVICE_FILES_FOLDER']):
     dataDict = {'name':file,'size':size(stat.st_size),'last_modified':datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S")}
     file_list.append(dataDict)
 
+
 #upload files to deviceS
 @app.route('/upload', methods=['POST'])
 def uploadToDevice():
     print("upload ran!")
-    print(request)
+    
     print("req ",request.files)    
     files = request.files.getlist('file')
     for file in files:
@@ -45,8 +46,8 @@ def uploadToDevice():
         if file:
             print("valid file")
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['DEVICE-FILES-FOLDER'], filename))
-            filename = os.path.join(app.config['DEVICE-FILES-FOLDER'],filename)
+            file.save(os.path.join(app.config['DEVICE_FILES_FOLDER'], filename))
+            filename = os.path.join(app.config['DEVICE_FILES_FOLDER'],filename)
         else:
             print("invalid file")
            
