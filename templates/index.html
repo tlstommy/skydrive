@@ -22,20 +22,7 @@
         }
 
         /*set  width for each col*/
-        .name-col {
-            width: 60%;
-            text-align: left;
-        }
-
-        .size-col {
-            width: 10%;
-            text-align: left; 
-        }
-
-        .date-col {
-            width: 30%;
-            text-align: left; 
-        }
+        
 
         .selected {
             background-color: #6969ed; /* Change this color to whatever you prefer */
@@ -44,6 +31,26 @@
     </style>
     <script>
         window.onload = function() {
+            
+            loadFileList(); // Initial file list load
+
+            
+            document.getElementById('filelist-check-all').addEventListener('change', function() {
+                const isChecked = this.checked;
+                const checkboxes = document.querySelectorAll('.filelist-checkbox');
+                
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                    const row = checkbox.closest('tr');
+                    if (isChecked) {
+                        row.classList.add('selected');
+                    } else {
+                        row.classList.remove('selected');
+                    }
+                });
+            });
+
+
             var fileList = document.getElementById('fileList');
         
             function updateFileDetails(fileRow) {
@@ -73,7 +80,7 @@
             });
         };
 
-        function loadFileList(){
+        function loadFileList() {
             fetch('/files')
             .then(response => response.json())
             .then(files => {
@@ -87,19 +94,30 @@
                 files.forEach(file => {
                     const row = document.createElement('tr');
                     
-                    //set row html
+                    // Set row HTML with a checkbox at the beginning
                     row.innerHTML = 
-                    `
-                        <td class="text-nowrap text-clip overflow-hidden truncate name-col" title="${file.name}">${file.name}</td>
-                        <td class="size-col">${file.size}</td>
-                        <td class="date-col">${file.last_modified}</td>
+                    `   
+                        <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
+                        <td class="text-nowrap text-left py-2 text-clip overflow-hidden truncate w-1/2" title="${file.name}">${file.name}</td>
+                        <td class="py-2 w-1/6">${file.size}</td>
+                        <td class="py-2 w-1/4">${file.last_modified}</td>
                     `;
                     
-                    //append row
+                    // Append row
                     fileListElement.appendChild(row);
+
+                    //apply selectors to checkboxes
+                    row.querySelector('.filelist-checkbox').addEventListener('change', function(e) {
+                        if(this.checked) {
+                            row.classList.add('selected'); // Add the 'selected' class when checked
+                        } else if (!this.checked) {
+                            row.classList.remove('selected'); // Remove the 'selected' class when unchecked
+                        }
+                    });
                 });
             });
         };
+
 
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -137,37 +155,27 @@
                         <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
                     </div>
                     <div class="flex flex-col w-full">
+                        
+                        
                         <p class="font-semibold mb-4">Files On Device</p>
-                        
-                        <!-- Table header -->
-                        <div class="table-header">
-                            <table>
-                                <thead class="">
-                                    <div>
-                                        <tr>
-                                            <th class="name-col">
-                                                Name
-                                            </th>
-                                            <th class="size-col">
-                                                File Size
-                                            </th>
-                                            <th class="date-col">
-                                                Last Modified
-                                            </th>
-                                        </tr>
-                                    </div>
-                                </thead>
-                            </table>
-                        </div>
-                        
+                    
                         <!-- Scrollable table body -->
                         <div class="scrollable-table-body">
-                            <table class="table-body">
-                                <tbody id="fileList">
+                            <table class="w-full text-left table-fixed">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
+                                        <th class="py-2 w-1/2">Name</th>
+                                        <th class="py-2 w-1/6">File Size</th>
+                                        <th class="py-2 w-1/4">Last Modified</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fileList" class="divide-y divide-gray-200">
                                     <!-- files from flask file_list -->
                                     {% for file in file_list %}
                                     <tr>
                                         <div>
+                                            <th class="px-4 py-2"><input type="checkbox" class="filelist-checkbox h-4" id="filelist-file-checkbox"></th>
                                             <td class="text-nowrap text-clip overflow-hidden truncate ... name-col" title="{{ file.name }}" id="file-name-data">{{ file.name }}</td>
                                             <td class="size-col" id="file-size-data">{{ file.size }}</td>
                                             <td class="date-col" id="file-lastmod-data">{{ file.last_modified }}</td>
