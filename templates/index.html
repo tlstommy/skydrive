@@ -171,18 +171,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="fileList" class="divide-y divide-gray-200">
-                                    <!-- files from flask file_list -->
-                                    {% for file in file_list %}
-                                    <tr>
-                                        <div>
-                                            <th class="px-4 py-2"><input type="checkbox" class="filelist-checkbox h-4" id="filelist-file-checkbox"></th>
-                                            <td class="text-nowrap text-clip overflow-hidden truncate ... name-col" title="{{ file.name }}" id="file-name-data">{{ file.name }}</td>
-                                            <td class="size-col" id="file-size-data">{{ file.size }}</td>
-                                            <td class="date-col" id="file-lastmod-data">{{ file.last_modified }}</td>
-                                        </div>
-                                    </tr>
-                                    {% endfor %}
-                                    
+                                    <!-- files from flaskt -->
                                 </tbody>
                             </table>
                         </div>
