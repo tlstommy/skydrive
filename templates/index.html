@@ -68,13 +68,17 @@
                 var targetRow = e.target.closest('tr'); // Get the closest tr parent to ensure we're targeting the row
                 
                 if(targetRow) {
-                    
+                    targetRow.classList.add('selected');
                     var rows = fileList.getElementsByTagName("tr");
                     for (var i = 0; i < rows.length; ++i) {
-                        rows[i].classList.remove('selected');
+                        console.log(rows[i].classList.contains("selected"))
+                        if(rows[i].checked){
+                            console.log("checked!")
+                            
+                        }
                     }
                     //add selected class style to clicked row
-                    targetRow.classList.add('selected');
+                    
                     updateFileDetails(targetRow);
                 }
             });
