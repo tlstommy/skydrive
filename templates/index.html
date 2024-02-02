@@ -27,6 +27,12 @@
         .selected {
             background-color: #6969ed; /* Change this color to whatever you prefer */
         }
+        .selected-single {
+            background-color: #dfdfdf; 
+            border: black;
+            border-width: 2px;
+
+        }
 
     </style>
     <script>
@@ -68,7 +74,7 @@
                 var targetRow = e.target.closest('tr'); // Get the closest tr parent to ensure we're targeting the row
                 
                 if(targetRow) {
-                    targetRow.classList.add('selected');
+                    targetRow.classList.add('selected-single');
                     var rows = fileList.getElementsByTagName("tr");
                     for (var i = 0; i < rows.length; ++i) {
                         console.log(rows[i].classList.contains("selected"))
