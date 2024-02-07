@@ -89,17 +89,27 @@
                                 type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
                         </div>
                     </form>
+                    <form method="post" enctype=multipart/form-data id="file-upload-form">
+                        <div class="py-4">
 
-                </div>
+                            <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                                Selected file(s): 
+                            </label>
+                            
+                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="downloadButton"
+                                type="submit" name="download-files" value="Download Files">Download Selected Files To Device</button>
+                        </div>
+                    </form>
 
-                <div class="flex justify-left mt-4">
-
-                    <button class="border-2 p-2 mx-4 hover:bg-blue-300">Download</button>
                 </div>
             </div>
 
             <div class="file-details-section p-4 border-2 w-1/3">
-                File details here
+                <h3 class='font-bold'>File Details</h3>
+                <hr>
+                <div class="file-info">
+
+                </div>
             </div>
             <div class="w-1/3 p-4 border-2">
                 Device Info
@@ -122,11 +132,14 @@
 
 
         function updateFileDetailsPreview(fileDetails) {
-            const detailsDiv = document.querySelector('.file-details-section');
-            detailsDiv.innerHTML = `<h3>File Details:</h3>
-                                    <p>Name: ${fileDetails.filename}</p>
-                                    <p>Size: ${fileDetails.size}</p>
-                                    <p>Last Modified: ${fileDetails.last_modified}</p>`;
+            console.log(fileDetails);
+            const fileDetailsInfo = document.querySelector('.file-details-section .file-info');
+            fileDetailsInfo.innerHTML = `
+            <p>Filename: ${fileDetails.filename}</p>
+            <p>Filetype: ${fileDetails.filetype}</p>
+            <p>Size: ${fileDetails.size}</p>
+            <p>Last Modified: ${fileDetails.last_modified}</p>
+            `;
         }
 
 

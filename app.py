@@ -63,9 +63,12 @@ def getFileInfo():
     print(f"Permissions: {oct(stat.st_mode)}")
     print(f"Last modified: {stat.st_mtime}")
 
+    filename,filetype = os.path.splitext(filename)
+
     fileDetailsDict = {
         "inode": stat.st_ino,
         "filename": filename,
+        "filetype": filetype,
         "size": size(stat.st_size),
         "last_modified": datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S"),
     }
