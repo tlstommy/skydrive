@@ -1,4 +1,4 @@
-from flask import Flask, render_template,jsonify,request
+from flask import Flask, render_template,jsonify,request,send_from_directory
 import os,random,time,signal
 from hurry.filesize import size
 import datetime
@@ -74,6 +74,12 @@ def getFileInfo():
     }
 
     return jsonify(fileDetailsDict)
+
+#download a file from this dev
+@app.route('/download/<filename>')
+def downloadFile(filename):
+    filename = secure_filename(filename)  # Ensure the filename is secure
+    return send_from_directory(app.config['DEVICE_FILES_FOLDER'], filename, as_attachment=True)
 
 
 # upload files to deviceS
