@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,148 +8,35 @@
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
     <title>WPSD - prototype</title>
     <style>
-        /* table body*/
+        /* table body */
         .scrollable-table-body {
             display: block;
-            max-height: 24em; 
+            max-height: 24em;
             overflow-y: auto;
             border: 1px solid #ccc;
         }
 
-        /*make cols of same width for header and body*/
-        .table-header table, .scrollable-table-body table {
+        /* make cols of same width for header and body */
+        .table-header table,
+        .scrollable-table-body table {
             width: 100%;
-            table-layout: fixed; 
+            table-layout: fixed;
         }
-
-        /*set  width for each col*/
-        
 
         .selected {
-            background-color: #6969ed; /* Change this color to whatever you prefer */
+            
+            background-color: #dfdfdf;
         }
+
         .selected-single {
-            background-color: #dfdfdf; 
+            
+            background-color: #6969ed;
             border: black;
             border-width: 2px;
-
         }
-
     </style>
-    <script>
-        window.onload = function() {
-            
-            loadFileList(); // Initial file list load
-
-            
-            document.getElementById('filelist-check-all').addEventListener('change', function() {
-                const isChecked = this.checked;
-                const checkboxes = document.querySelectorAll('.filelist-checkbox');
-                
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = isChecked;
-                    const row = checkbox.closest('tr');
-                    if (isChecked) {
-                        row.classList.add('selected');
-                    } else {
-                        row.classList.remove('selected');
-                    }
-                });
-            });
-
-
-            var fileList = document.getElementById('fileList');
-        
-            function updateFileDetails(fileRow) {
-                // You can update file details based on the clicked row
-                // For now, just logging the file name, size, and last modified date
-                var fileName = fileRow.querySelector(".name-col").textContent;
-                var fileSize = fileRow.querySelector(".size-col").textContent;
-                var fileLastMod = fileRow.querySelector(".date-col").textContent;
-                console.log("File Name: " + fileName);
-                console.log("File Size: " + fileSize);
-                console.log("Last Modified: " + fileLastMod);
-            }
-        
-            fileList.addEventListener('click', function(e) {
-                var targetRow = e.target.closest('tr'); // Get the closest tr parent to ensure we're targeting the row
-                
-                if(targetRow) {
-                    targetRow.classList.add('selected-single');
-                    var rows = fileList.getElementsByTagName("tr");
-                    for (var i = 0; i < rows.length; ++i) {
-                        console.log(rows[i].classList.contains("selected"))
-                        if(rows[i].checked){
-                            console.log("checked!")
-                            
-                        }
-                    }
-                    //add selected class style to clicked row
-                    
-                    updateFileDetails(targetRow);
-                }
-            });
-        };
-
-        function loadFileList() {
-            fetch('/files')
-            .then(response => response.json())
-            .then(files => {
-                console.log(files);
-                
-                const fileListElement = document.getElementById('fileList');
-                
-                // Clear list
-                fileListElement.innerHTML = '';
-                
-                files.forEach(file => {
-                    const row = document.createElement('tr');
-                    
-                    // Set row HTML with a checkbox at the beginning
-                    row.innerHTML = 
-                    `   
-                        <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
-                        <td class="text-nowrap text-left py-2 text-clip overflow-hidden truncate w-1/2" title="${file.name}">${file.name}</td>
-                        <td class="py-2 w-1/6">${file.size}</td>
-                        <td class="py-2 w-1/4">${file.last_modified}</td>
-                    `;
-                    
-                    // Append row
-                    fileListElement.appendChild(row);
-
-                    //apply selectors to checkboxes
-                    row.querySelector('.filelist-checkbox').addEventListener('change', function(e) {
-                        if(this.checked) {
-                            row.classList.add('selected'); // Add the 'selected' class when checked
-                        } else if (!this.checked) {
-                            row.classList.remove('selected'); // Remove the 'selected' class when unchecked
-                        }
-                    });
-                });
-            });
-        };
-
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle file upload
-            document.getElementById('uploadButton').addEventListener('click', function(event) {
-                event.preventDefault();
-                var formData = new FormData(document.getElementById('file-upload-form'));
-                console.log(formData);
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    loadFileList(); // Reload the file list
-                });
-            });
-        });
-        
-    </script>
 </head>
+
 <body>
     <div class="min-h-screen flex flex-col">
         <header class="border-b-2 p-4">
@@ -158,23 +46,24 @@
         </header>
         <main class="flex flex-1">
             <div class="p-8 w-2/3">
-                
+
                 <div>
-                
+
                     <div class="mb-4">
                         <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
                     </div>
                     <div class="flex flex-col w-full">
-                        
-                        
+
+
                         <p class="font-semibold mb-4">Files On Device</p>
-                    
+
                         <!-- Scrollable table body -->
                         <div class="scrollable-table-body">
                             <table class="w-full text-left table-fixed">
                                 <thead>
                                     <tr class="bg-gray-100">
-                                        <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
+                                        <th class="px-4 py-2 w-2"><input type="checkbox"
+                                                class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
                                         <th class="py-2 w-1/2">Name</th>
                                         <th class="py-2 w-1/6">File Size</th>
                                         <th class="py-2 w-1/4">Last Modified</th>
@@ -185,28 +74,31 @@
                                 </tbody>
                             </table>
                         </div>
-                        
+
                     </div>
                     <form method="post" enctype=multipart/form-data id="file-upload-form">
                         <div class="py-8">
-                            
+
                             <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
                                 Upload file(s)
                             </label>
-                            <input class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none" id="multiple_files" type="file" name="file" multiple>
-                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300"  id="uploadButton" type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
+                            <input
+                                class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                                id="multiple_files" type="file" name="file" multiple>
+                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="uploadButton"
+                                type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
                         </div>
                     </form>
-                    
+
                 </div>
-                
+
                 <div class="flex justify-left mt-4">
-                    
+
                     <button class="border-2 p-2 mx-4 hover:bg-blue-300">Download</button>
                 </div>
             </div>
 
-            <div class="p-4 border-2 w-1/3">
+            <div class="file-details-section p-4 border-2 w-1/3">
                 File details here
             </div>
             <div class="w-1/3 p-4 border-2">
@@ -214,5 +106,134 @@
             </div>
         </main>
     </div>
+
+    <script>
+        var selectedFiles = []; //global array of selected files
+        var individualFile = ""; //for single file selection
+
+        function getFileDetails(inode, name) {
+            fetch(`/get-file-details?inode=${inode}&name=${name}`)
+                .then(response => response.json())
+                .then(fileDetails => updateFileDetailsPreview(fileDetails))
+                .catch(error => {
+                    console.error('Error fetching file details:', error);
+                });
+        }
+
+
+        function updateFileDetailsPreview(fileDetails) {
+            const detailsDiv = document.querySelector('.file-details-section');
+            detailsDiv.innerHTML = `<h3>File Details:</h3>
+                                    <p>Name: ${fileDetails.filename}</p>
+                                    <p>Size: ${fileDetails.size}</p>
+                                    <p>Last Modified: ${fileDetails.last_modified}</p>`;
+        }
+
+
+        function updateSingleSelect(row){
+            const fileName = row.querySelector(".file-name-col")?.textContent;
+            const fileSize = row.querySelector(".file-size-col")?.textContent;
+            const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
+            const fileInode = row.dataset.inode;
+
+            const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
+            individualFile = fileDetails;
+            console.log(individualFile);
+        }
+
+        function updateSelectedFiles(row, isChecked) {
+            const fileName = row.querySelector(".file-name-col")?.textContent;
+            const fileSize = row.querySelector(".file-size-col")?.textContent;
+            const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
+            const fileInode = row.dataset.inode;
+
+            const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
+
+            if (isChecked) {
+                selectedFiles.push(fileDetails);
+            } else {
+                selectedFiles = selectedFiles.filter(file => file.inode !== fileInode);
+            }
+            console.log(selectedFiles);
+            console.log(selectedFiles.length);
+        }
+
+        function handleCheckboxChange(checkbox) {
+            const row = checkbox.closest('tr');
+            const isChecked = checkbox.checked;
+            row.classList.toggle('selected', isChecked);
+            updateSelectedFiles(row, isChecked);
+        }
+
+        function loadFileList() {
+            fetch('/files')
+                .then(response => response.json())
+                .then(files => {
+                    const fileListElement = document.getElementById('fileList');
+                    fileListElement.innerHTML = '';
+
+                    files.forEach(file => {
+                        const row = document.createElement('tr');
+                        row.dataset.inode = file.inode;
+                        row.innerHTML = `
+                            <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
+                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate w-1/2" title="${file.name}">${file.name}</td>
+                            <td class="file-size-col py-2 w-1/6">${file.size}</td>
+                            <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
+                        `;
+
+                        fileListElement.appendChild(row);
+
+                        row.querySelector('.filelist-checkbox').addEventListener('change', function () {
+                            handleCheckboxChange(this);
+                        });
+                    });
+                });
+        }
+
+
+        //on page load
+        window.onload = function () {
+            loadFileList(); // Initial file list load
+
+            document.getElementById('filelist-check-all').addEventListener('change', function () {
+                const isChecked = this.checked;
+                const checkboxes = document.querySelectorAll('.filelist-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                    handleCheckboxChange(checkbox);
+                });
+            });
+
+            document.getElementById('fileList').addEventListener('click', function (e) {
+                const targetRow = e.target.closest('tr');
+                if (targetRow && !e.target.classList.contains('filelist-checkbox')) {
+                    this.querySelectorAll('tr').forEach(row => row.classList.remove('selected-single'));
+                    targetRow.classList.add('selected-single');
+                    updateSingleSelect(targetRow);
+                    getFileDetails(individualFile.inode,individualFile.name);
+                    
+                }
+            });
+
+
+            //send a post request to upload files
+            document.getElementById('uploadButton').addEventListener('click', function (event) {
+                event.preventDefault();
+                var formData = new FormData(document.getElementById('file-upload-form'));
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        loadFileList(); // Reload the file list
+                    }).catch(error => {
+                        console.error('Upload Error:', error);
+                    });
+            });
+        };
+    </script>
 </body>
+
 </html>
