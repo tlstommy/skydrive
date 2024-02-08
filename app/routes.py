@@ -3,12 +3,16 @@ from app.file_handler import FileHandler
 from flask import render_template, jsonify, request, send_from_directory
 from werkzeug.utils import secure_filename
 
+#routes for requests and such
+
 file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
 
+#call to get file list
 @app.route('/files', methods=['GET'])
 def list_files():
     return jsonify(file_handler.get_file_list())
 
+#call to get file details
 @app.route('/get-file-details', methods=['GET'])
 def get_file_info():
     inode = int(request.args['inode'])
@@ -19,10 +23,12 @@ def get_file_info():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+#call to download file
 @app.route('/download/<filename>', methods=['GET'])
 def download_file(filename):
     return file_handler.download_file(filename)
 
+#call to delete file
 @app.route('/delete/<filename>', methods=['DELETE'])
 def delete_file(filename):
     try:
@@ -33,11 +39,13 @@ def delete_file(filename):
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
 
+#call to upload file
 @app.route('/upload', methods=['POST'])
 def upload_to_device():
     files = request.files.getlist('file')
     return file_handler.upload_files(files)
 
+#home
 @app.route("/", methods=['GET'])
 def index():
     files = file_handler.get_file_list()

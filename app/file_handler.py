@@ -3,10 +3,13 @@ from hurry.filesize import size
 from werkzeug.utils import secure_filename
 from flask import send_from_directory
 
+
+#file ops
 class FileHandler:
     def __init__(self, files_folder):
         self.device_files_folder = files_folder
 
+    #get list of the files
     def get_file_list(self):
         file_list = []
         for file in os.listdir(self.device_files_folder):
@@ -21,6 +24,8 @@ class FileHandler:
             file_list.append(dataDict)
         return file_list
 
+
+    #get info of a file
     def get_file_info(self, inode, filename):
         fileDetailsDict = {}
         
@@ -51,15 +56,18 @@ class FileHandler:
 
         return fileDetailsDict
 
+    #download a single file
     def download_file(self, filename):
         filename = secure_filename(filename)
         return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
 
+    #delete a single file
     def delete_file(self, filename):
         filename = secure_filename(filename)
         full_path = os.path.join(self.device_files_folder, filename)
         os.remove(full_path)
 
+    #upload a single file
     def upload_files(self, files):
         for file in files:
             if file:
