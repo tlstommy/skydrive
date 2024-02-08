@@ -81,6 +81,19 @@ def downloadFile(filename):
     filename = secure_filename(filename)  # Ensure the filename is secure
     return send_from_directory(app.config['DEVICE_FILES_FOLDER'], filename, as_attachment=True)
 
+#Delete a file
+@app.route('/delete/<filename>', methods=['DELETE'])
+def deleteFile(filename):
+    filename = secure_filename(filename)  # Ensure the filename is secure
+    file_path = os.path.join(app.config['DEVICE_FILES_FOLDER'], filename)
+    try:
+        os.remove(file_path)
+        return jsonify({"success": True, "message": "File deleted successfully"}), 200
+    except FileNotFoundError:
+        return jsonify({"success": False, "message": "File not found"}), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
 
 # upload files to deviceS
 @app.route('/upload', methods=['POST'])
