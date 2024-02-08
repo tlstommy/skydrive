@@ -34,6 +34,11 @@
             border: black;
             border-width: 2px;
         }
+
+        .file-options-buttons, .multi-files-options-section {
+            display: none; /* Hide initially */
+        }
+
     </style>
 </head>
 
@@ -89,15 +94,22 @@
                                 type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
                         </div>
                     </form>
-                    <form method="post" enctype=multipart/form-data id="file-upload-form">
+                    <form method="post" enctype=multipart/form-data id="file-upload-form" class="multi-files-options-section">
                         <div class="py-4">
 
-                            <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
-                                Selected file(s): 
+                            <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                                Selected file(s):
                             </label>
                             
-                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="downloadButton"
-                                type="submit" name="download-files" value="Download Files">Download Selected Files To Device</button>
+                            <a id="downloadButtonMulti" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" download>
+                                Download Selected Files
+                            </a>
+
+                            <button id="deleteButtonMulti" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-blue-400">
+                                Delete Selected Files
+                            </button>
+
+
                         </div>
                     </form>
 
@@ -149,12 +161,42 @@
             <p>Last Modified: ${fileDetails.last_modified}</p>
             `;
 
+            const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
+            optionsButtons.style.display = 'block'; 
+
             const downloadLink = document.querySelector('.file-details-section #downloadButton');
             downloadLink.href = `/download/${fileDetails.filename}${fileDetails.filetype}`;
         }
 
+        //delete multiple files, prob better than sending a spam of requests
+        document.getElementById('deleteButtonMulti').addEventListener('click', function() {
+            const fileDetails = individualFile;
+            console.log("Delete")
+            console.log(fileDetails)
+            fetch(`/delete-multi/${fileDetails.name}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('File deleted successfully');
+                        loadFileList();
+                        const fileInfo = document.querySelector('.file-info');
+                        const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
+                        fileInfo.style.display = 'none'; 
+                        fileInfoButtons.style.display = 'none'; 
+                    } else {
+                        alert('Error deleting file: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting file');
+                });
+        });
+
+
+        //delete single file
         document.getElementById('deleteButton').addEventListener('click', function() {
-            const fileDetails = individualFile; // Assuming this holds the currently selected file's details
+            const fileDetails = individualFile;
             console.log("Delete")
             console.log(fileDetails)
             fetch(`/delete/${fileDetails.name}`, { method: 'DELETE' })
@@ -162,7 +204,11 @@
                 .then(data => {
                     if (data.success) {
                         alert('File deleted successfully');
-                        // Optionally, remove the file entry from the UI here
+                        loadFileList();
+                        const fileInfo = document.querySelector('.file-info');
+                        const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
+                        fileInfo.style.display = 'none'; 
+                        fileInfoButtons.style.display = 'none'; 
                     } else {
                         alert('Error deleting file: ' + data.message);
                     }
@@ -194,13 +240,26 @@
 
             const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
 
-            if (isChecked) {
-                selectedFiles.push(fileDetails);
-            } else {
+            if(isChecked){
+
+                
+                if(!selectedFiles.includes(fileDetails)){
+                    selectedFiles.push(fileDetails);
+                }
+                
+            }else{
                 selectedFiles = selectedFiles.filter(file => file.inode !== fileInode);
             }
-            console.log(selectedFiles);
-            console.log(selectedFiles.length);
+            
+            //hide/show the selected files options if they are selected
+            if(selectedFiles.length > 0){
+                document.querySelector(".multi-files-options-section").style.display = 'block';  
+            }else{
+                document.querySelector(".multi-files-options-section").style.display = 'none';
+            }
+
+            const selectedFilesLabel = document.querySelector(".selected-files-label");       
+            selectedFilesLabel.textContent = `Selected file${selectedFiles.length > 1 ? ": ":":  "}${selectedFiles.length}`;
         }
 
         function handleCheckboxChange(checkbox) {
@@ -244,6 +303,9 @@
             document.getElementById('filelist-check-all').addEventListener('change', function () {
                 const isChecked = this.checked;
                 const checkboxes = document.querySelectorAll('.filelist-checkbox');
+
+                //clear out selected bc we will add new ones
+                selectedFiles = [];
                 checkboxes.forEach(checkbox => {
                     checkbox.checked = isChecked;
                     handleCheckboxChange(checkbox);

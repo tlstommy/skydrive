@@ -31,9 +31,8 @@ def getFileList():
 
     for file in os.listdir(app.config['DEVICE_FILES_FOLDER']):
         stat = os.stat(os.path.join(DEVICE_FILES_FOLDER,file))
-        print(stat)
         #convert sizes to appropriate units and times from unix
-        dataDict = {'inode':stat.st_ino, 'name':file,'size':size(stat.st_size),'last_modified':datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S")}
+        dataDict = {'inode':stat.st_ino, 'name':secure_filename(file),'size':size(stat.st_size),'last_modified':datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S")}
         file_list.append(dataDict)
     return file_list
 
@@ -49,7 +48,7 @@ def getFileInfo():
     fileDetailsDict = {}
     print(request)
     inode = int(request.args['inode'])
-    filename = request.args['name']
+    filename = secure_filename(request.args['name'])
     print(inode,filename)
     stat = os.stat(os.path.join(DEVICE_FILES_FOLDER,filename))
 
@@ -73,18 +72,22 @@ def getFileInfo():
         "last_modified": datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S"),
     }
 
+    print(fileDetailsDict)
+
     return jsonify(fileDetailsDict)
 
-#download a file from this dev
+#download a singular file from this dev
 @app.route('/download/<filename>')
 def downloadFile(filename):
     filename = secure_filename(filename)  # Ensure the filename is secure
     return send_from_directory(app.config['DEVICE_FILES_FOLDER'], filename, as_attachment=True)
 
-#Delete a file
+#Delete a singular file
 @app.route('/delete/<filename>', methods=['DELETE'])
 def deleteFile(filename):
-    filename = secure_filename(filename)  # Ensure the filename is secure
+    print(filename)
+    filename = secure_filename(filename)
+    print(filename)
     file_path = os.path.join(app.config['DEVICE_FILES_FOLDER'], filename)
     try:
         os.remove(file_path)
@@ -107,6 +110,7 @@ def uploadToDevice():
         if file:
             print("valid file")
             filename = secure_filename(file.filename)
+            print(filename)
             file.save(os.path.join(app.config['DEVICE_FILES_FOLDER'], filename))
             filename = os.path.join(app.config['DEVICE_FILES_FOLDER'],filename)
         else:
