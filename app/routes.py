@@ -28,7 +28,7 @@ def get_file_info():
 def download_file(filename):
     return file_handler.download_file(filename)
 
-#call to delete file
+#call to delete a file
 @app.route('/delete/<filename>', methods=['DELETE'])
 def delete_file(filename):
     try:
@@ -37,6 +37,21 @@ def delete_file(filename):
     except FileNotFoundError:
         return jsonify({"success": False, "message": "File not found"}), 404
     except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+    
+#call to delete multiple files
+@app.route('/delete-multi/', methods=['DELETE'])
+def delete_multiple_files():
+    print("del multi call routes")
+    deleteList = request.get_json()["files"]
+    
+    try:
+        
+        file_handler.delete_multiple_files(deleteList)
+        return jsonify({"success": True, "message": "File deleted successfully"})
+    
+    except Exception as e:
+        print("error, ",e)
         return jsonify({"success": False, "message": str(e)}), 500
 
 #call to upload file

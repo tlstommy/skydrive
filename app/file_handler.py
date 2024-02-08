@@ -66,8 +66,16 @@ class FileHandler:
         filename = secure_filename(filename)
         full_path = os.path.join(self.device_files_folder, filename)
         os.remove(full_path)
+    
+    def delete_multiple_files(self,files):
+        print("delete multi call")
+        print(files)
+        for file in files:
+            filename = secure_filename(file)
+            full_path = os.path.join(self.device_files_folder, filename)
+            os.remove(full_path)
 
-    #upload a single file
+    #upload a file/s
     def upload_files(self, files):
         for file in files:
             if file:
