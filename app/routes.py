@@ -53,6 +53,22 @@ def delete_multiple_files():
     except Exception as e:
         print("error, ",e)
         return jsonify({"success": False, "message": str(e)}), 500
+    
+#call to download multiple files
+@app.route('/download-multi/', methods=['POST'])
+def download_multiple_files():
+    print("download multi call routes")
+    fileList = request.get_json()["files"]
+    if fileList:
+        try:
+            # Call the download_multiple_files method from FileHandler
+            return file_handler.download_multiple_files(fileList)
+        except Exception as e:
+            print(e)
+            return jsonify({"error": str(e)}), 500
+    else:
+        return jsonify({"error": "No files provided"}), 400
+
 
 #call to upload file
 @app.route('/upload', methods=['POST'])

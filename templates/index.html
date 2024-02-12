@@ -197,6 +197,37 @@
                     alert('Error deleting file');
                 });
         });
+        
+        //download multiple files, prob better than sending a spam of requests
+        document.getElementById('downloadButtonMulti').addEventListener('click', function(event) {
+            event.preventDefault();
+            console.log("Download multiple")
+            
+            const payload = { files: selectedFiles.map(file => file.name) };
+
+            console.log(payload)
+
+            fetch(`/download-multi/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload), // Send payload of selected files
+            }).then(response => response.json())
+                .then(data => {
+                    
+                    if (data.success) {
+                        alert('File downloaded successfully');
+                        loadFileList();
+                    } else {
+                        alert('Error downloading file: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error downloading files');
+                });
+        });
 
 
         //delete single file

@@ -60,13 +60,22 @@ class FileHandler:
     def download_file(self, filename):
         filename = secure_filename(filename)
         return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
+        
+    #download multiple files
+    def download_multiple_files(self,files):
+        print("download multi call")
+        print(files)
+        for file in files:
+            print(file)
+
 
     #delete a single file
     def delete_file(self, filename):
         filename = secure_filename(filename)
         full_path = os.path.join(self.device_files_folder, filename)
         os.remove(full_path)
-    
+
+    #del multiple files
     def delete_multiple_files(self,files):
         print("delete multi call")
         print(files)
@@ -74,6 +83,9 @@ class FileHandler:
             filename = secure_filename(file)
             full_path = os.path.join(self.device_files_folder, filename)
             os.remove(full_path)
+
+    
+        
 
     #upload a file/s
     def upload_files(self, files):

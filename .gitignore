@@ -166,3 +166,6 @@ node_modules/*
 package-lock.json
 
 device-files/*
+
+
+testing-files/*
