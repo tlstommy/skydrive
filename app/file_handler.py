@@ -58,6 +58,7 @@ class FileHandler:
 
     #download a single file
     def download_file(self, filename):
+        print("download single file run")
         filename = secure_filename(filename)
         return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
         

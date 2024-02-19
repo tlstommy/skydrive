@@ -175,19 +175,19 @@
             
             const payload = { files: selectedFiles.map(file => file.name) };
 
-            console.log(payload)
+            console.log(typeof(payload))
 
-            fetch(`/delete-multi/`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload), // Send payload of selected files
-            }).then(response => response.json())
+            //loop through and call a delete request on each file
+            for(file of payload.files){
+                fetch(`/delete/${file}`, { method: 'DELETE' })
+                .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('File deleted successfully');
-                        loadFileList();
+ 
+                        const fileInfo = document.querySelector('.file-info');
+                        const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
+                        fileInfo.style.display = 'none'; 
+                        fileInfoButtons.style.display = 'none'; 
                     } else {
                         alert('Error deleting file: ' + data.message);
                     }
@@ -196,6 +196,10 @@
                     console.error('Error:', error);
                     alert('Error deleting file');
                 });
+            }
+            
+            loadFileList();
+            alert('Files deleted successfully!');
         });
         
         //download multiple files, prob better than sending a spam of requests
@@ -206,27 +210,28 @@
             const payload = { files: selectedFiles.map(file => file.name) };
 
             console.log(payload)
-
-            fetch(`/download-multi/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload), // Send payload of selected files
-            }).then(response => response.json())
-                .then(data => {
+            for(file of payload.files){
+                console.log(`/download/${file}`)
+                fetch(`/download/${file}`, {
+                    method: 'GET',
                     
-                    if (data.success) {
-                        alert('File downloaded successfully');
-                        loadFileList();
-                    } else {
-                        alert('Error downloading file: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error downloading files');
+                    
+                }).then(response => response.json())
+                    .then(data => {
+                        console.log(response.json())
+                        if (data.success) {
+                            console.log(`downloaded file ${file}`)
+                        } else {
+                            alert('Error downloading file: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error downloading files');
                 });
+            }
+            alert('Files downloaded successfully');
+            loadFileList();
         });
 
 
