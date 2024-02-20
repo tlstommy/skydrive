@@ -1,7 +1,8 @@
 import os, datetime
 from hurry.filesize import size
 from werkzeug.utils import secure_filename
-from flask import send_from_directory
+from flask import send_from_directory,send_file
+import zipfile
 
 
 #file ops
@@ -65,9 +66,29 @@ class FileHandler:
     #download multiple files
     def download_multiple_files(self,files):
         print("download multi call")
-        print(files)
-        for file in files:
-            print(file)
+
+        zipFilename = 'downloaded_files.zip'
+        zipFP = os.path.join(self.device_files_folder, zipFilename)
+
+
+        #make a zip of the selected files
+        with zipfile.ZipFile(zipFP, 'w') as zipf:
+            for file in files:
+                
+                filename = secure_filename(file)
+                file_path = os.path.join(self.device_files_folder, filename)
+                
+
+                # Check if the file exists
+                if os.path.exists(file_path):
+                    zipf.write(file_path, arcname=filename)
+                else:
+                    print(f'File not found: {file}')
+
+        sentfile = send_file(zipFP)
+
+        #intercept another request after this to delete the zip
+        return sentfile
 
 
     #delete a single file

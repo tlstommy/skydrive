@@ -24,21 +24,22 @@
         }
 
         .selected {
-            
+
             background-color: #dfdfdf;
         }
 
         .selected-single {
-            
+
             background-color: #6969ed;
             border: black;
             border-width: 2px;
         }
 
-        .file-options-buttons, .multi-files-options-section {
-            display: none; /* Hide initially */
+        .file-options-buttons,
+        .multi-files-options-section {
+            display: none;
+            /* Hide initially */
         }
-
     </style>
 </head>
 
@@ -94,14 +95,17 @@
                                 type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
                         </div>
                     </form>
-                    <form method="post" enctype=multipart/form-data id="file-upload-form" class="multi-files-options-section">
+                    <form method="post" enctype=multipart/form-data id="file-upload-form"
+                        class="multi-files-options-section">
                         <div class="py-4">
 
-                            <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                            <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900"
+                                for="multiple_files">
                                 Selected file(s):
                             </label>
-                            
-                            <a id="downloadButtonMulti" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" download>
+
+                            <a id="downloadButtonMulti" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300"
+                                download>
                                 Download Selected Files
                             </a>
 
@@ -122,15 +126,16 @@
                 <div class="file-info">
                     <!-- File details will be inserted here -->
                 </div>
-            
+
                 <div class="file-options-buttons">
 
-                    <a id="downloadButton" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" download>Download File</a>
+                    <a id="downloadButton" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" download>Download
+                        File</a>
 
                     <button id="deleteButton" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-red">Delete File</button>
                 </div>
             </div>
-            
+
             <div class="w-1/3 p-4 border-2">
                 Device Info
             </div>
@@ -162,81 +167,76 @@
             `;
 
             const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
-            optionsButtons.style.display = 'block'; 
+            optionsButtons.style.display = 'block';
 
             const downloadLink = document.querySelector('.file-details-section #downloadButton');
             downloadLink.href = `/download/${fileDetails.filename}${fileDetails.filetype}`;
         }
 
-        //delete multiple files, prob better than sending a spam of requests
-        document.getElementById('deleteButtonMulti').addEventListener('click', function(event) {
+        //delete multiple files
+        document.getElementById('deleteButtonMulti').addEventListener('click', function (event) {
             event.preventDefault();
             console.log("Delete")
-            
+
             const payload = { files: selectedFiles.map(file => file.name) };
 
-            console.log(typeof(payload))
+            console.log(typeof (payload))
 
             //loop through and call a delete request on each file
-            for(file of payload.files){
+            for (file of payload.files) {
                 fetch(`/delete/${file}`, { method: 'DELETE' })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
- 
-                        const fileInfo = document.querySelector('.file-info');
-                        const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
-                        fileInfo.style.display = 'none'; 
-                        fileInfoButtons.style.display = 'none'; 
-                    } else {
-                        alert('Error deleting file: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error deleting file');
-                });
-            }
-            
-            loadFileList();
-            alert('Files deleted successfully!');
-        });
-        
-        //download multiple files, prob better than sending a spam of requests
-        document.getElementById('downloadButtonMulti').addEventListener('click', function(event) {
-            event.preventDefault();
-            console.log("Download multiple")
-            
-            const payload = { files: selectedFiles.map(file => file.name) };
-
-            console.log(payload)
-            for(file of payload.files){
-                console.log(`/download/${file}`)
-                fetch(`/download/${file}`, {
-                    method: 'GET',
-                    
-                    
-                }).then(response => response.json())
+                    .then(response => response.json())
                     .then(data => {
-                        console.log(response.json())
                         if (data.success) {
-                            console.log(`downloaded file ${file}`)
+
+                            const fileInfo = document.querySelector('.file-info');
+                            const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
+                            fileInfo.style.display = 'none';
+                            fileInfoButtons.style.display = 'none';
                         } else {
-                            alert('Error downloading file: ' + data.message);
+                            alert('Error deleting file: ' + data.message);
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('Error downloading files');
-                });
+                        alert('Error deleting file');
+                    });
             }
-            alert('Files downloaded successfully');
+
             loadFileList();
+            alert('Files deleted successfully!');
+        });
+
+        //download multiple files, prob better than sending a spam of requests
+        document.getElementById('downloadButtonMulti').addEventListener('click', function (event) {
+            event.preventDefault();
+            const payload = { files: selectedFiles.map(file => file.name) };
+            fetch('/download-multi/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            })
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'downloaded_files.zip'; // Name of the zip file
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error downloading files:', error));
         });
 
 
+
+
         //delete single file
-        document.getElementById('deleteButton').addEventListener('click', function() {
+        document.getElementById('deleteButton').addEventListener('click', function () {
             const fileDetails = individualFile;
             console.log("Delete")
             console.log(fileDetails)
@@ -248,8 +248,8 @@
                         loadFileList();
                         const fileInfo = document.querySelector('.file-info');
                         const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
-                        fileInfo.style.display = 'none'; 
-                        fileInfoButtons.style.display = 'none'; 
+                        fileInfo.style.display = 'none';
+                        fileInfoButtons.style.display = 'none';
                     } else {
                         alert('Error deleting file: ' + data.message);
                     }
@@ -262,7 +262,7 @@
 
 
 
-        function updateSingleSelect(row){
+        function updateSingleSelect(row) {
             const fileName = row.querySelector(".file-name-col")?.textContent;
             const fileSize = row.querySelector(".file-size-col")?.textContent;
             const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
@@ -281,26 +281,26 @@
 
             const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
 
-            if(isChecked){
+            if (isChecked) {
 
-                
-                if(!selectedFiles.includes(fileDetails)){
+
+                if (!selectedFiles.includes(fileDetails)) {
                     selectedFiles.push(fileDetails);
                 }
-                
-            }else{
+
+            } else {
                 selectedFiles = selectedFiles.filter(file => file.inode !== fileInode);
             }
-            
+
             //hide/show the selected files options if they are selected
-            if(selectedFiles.length > 0){
-                document.querySelector(".multi-files-options-section").style.display = 'block';  
-            }else{
+            if (selectedFiles.length > 0) {
+                document.querySelector(".multi-files-options-section").style.display = 'block';
+            } else {
                 document.querySelector(".multi-files-options-section").style.display = 'none';
             }
 
-            const selectedFilesLabel = document.querySelector(".selected-files-label");       
-            selectedFilesLabel.textContent = `Selected file${selectedFiles.length > 1 ? ": ":":  "}${selectedFiles.length}`;
+            const selectedFilesLabel = document.querySelector(".selected-files-label");
+            selectedFilesLabel.textContent = `Selected file${selectedFiles.length > 1 ? ": " : ":  "}${selectedFiles.length}`;
         }
 
         function handleCheckboxChange(checkbox) {
@@ -359,8 +359,8 @@
                     this.querySelectorAll('tr').forEach(row => row.classList.remove('selected-single'));
                     targetRow.classList.add('selected-single');
                     updateSingleSelect(targetRow);
-                    getFileDetails(individualFile.inode,individualFile.name);
-                    
+                    getFileDetails(individualFile.inode, individualFile.name);
+
                 }
             });
 

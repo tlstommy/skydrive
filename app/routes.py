@@ -61,7 +61,7 @@ def download_multiple_files():
     fileList = request.get_json()["files"]
     if fileList:
         try:
-            # Call the download_multiple_files method from FileHandler
+            #call the download_multiple_files method from FileHandler
             return file_handler.download_multiple_files(fileList)
         except Exception as e:
             print(e)
