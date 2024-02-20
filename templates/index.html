@@ -308,7 +308,7 @@
             }
 
             const selectedFilesLabel = document.querySelector(".selected-files-label");
-            selectedFilesLabel.textContent = `Selected file${selectedFiles.length > 1 ? ": " : ":  "}${selectedFiles.length}`;
+            selectedFilesLabel.textContent = `Selected file${selectedFiles.length > 1 ? "s: " : ":  "}${selectedFiles.length}`;
         }
 
         function handleCheckboxChange(checkbox) {
@@ -330,7 +330,7 @@
                         row.dataset.inode = file.inode;
                         row.innerHTML = `
                             <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
-                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate w-1/2" title="${file.name}">${file.name}</td>
+                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name}</td>
                             <td class="file-size-col py-2 w-1/6">${file.size}</td>
                             <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
                         `;

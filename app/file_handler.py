@@ -82,7 +82,6 @@ class FileHandler:
                 filename = secure_filename(file)
                 file_path = os.path.join(self.device_files_folder, filename)
                 
-
                 # Check if the file exists
                 if os.path.exists(file_path):
                     zipf.write(file_path, arcname=filename)
