@@ -87,6 +87,12 @@ def upload_to_device():
     files = request.files.getlist('file')
     return file_handler.upload_files(files)
 
+#preview file call,figure out what to do for pdf/img/office docs
+@app.route('/preview-file/<filename>', methods=['GET'])
+def preview_file(filename):
+    return file_handler.preview_file(filename)
+
+
 #home
 @app.route("/", methods=['GET'])
 def index():

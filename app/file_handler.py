@@ -68,6 +68,7 @@ class FileHandler:
         zipFilename = 'downloaded_files.zip'
         zipFP = os.path.join(self.device_files_folder, zipFilename)
         os.remove(zipFP)
+
     def download_multiple_files(self,files):
         print("download multi call")
 
@@ -109,9 +110,6 @@ class FileHandler:
             full_path = os.path.join(self.device_files_folder, filename)
             os.remove(full_path)
 
-    
-        
-
     #upload a file/s
     def upload_files(self, files):
         for file in files:
@@ -119,3 +117,8 @@ class FileHandler:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(self.device_files_folder, filename))
         return {"success": True, "message": "Files uploaded successfully"}
+    
+    #preview files
+    def preview_file(self,filename):
+        print('preview file ran,')
+        print(f'ran on {filename}')

@@ -40,6 +40,15 @@
             display: none;
             /* Hide initially */
         }
+
+        #file-preview-box {
+            width: 100%;
+            height: 500px; /* Adjust as needed */
+            border: 1px solid #ccc;
+            overflow: auto;
+            background: #fff;
+        }
+
     </style>
 </head>
 
@@ -126,6 +135,7 @@
                 <div class="file-info">
                     <!-- File details will be inserted here -->
                 </div>
+                
 
                 <div class="file-options-buttons">
 
@@ -133,6 +143,10 @@
                         File</a>
 
                     <button id="deleteButton" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-red">Delete File</button>
+                </div>
+
+                <div id="file-preview-box">
+                    <!-- File preview will be inserted here -->
                 </div>
             </div>
 
