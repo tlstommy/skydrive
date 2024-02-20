@@ -68,6 +68,17 @@ def download_multiple_files():
             return jsonify({"error": str(e)}), 500
     else:
         return jsonify({"error": "No files provided"}), 400
+#cleanup call for above
+@app.route('/download-multi-cleanup/', methods=['POST'])
+def download_multiple_files_cleanup():
+    print('download multi cleanup call')
+    try:
+        #call the download_multiple_files method from FileHandler
+        file_handler.download_multiple_files_cleanup()
+        return jsonify({"success": True, "message": "File deleted successfully"})
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 
 #call to upload file

@@ -64,6 +64,10 @@ class FileHandler:
         return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
         
     #download multiple files
+    def download_multiple_files_cleanup(self):
+        zipFilename = 'downloaded_files.zip'
+        zipFP = os.path.join(self.device_files_folder, zipFilename)
+        os.remove(zipFP)
     def download_multiple_files(self,files):
         print("download multi call")
 

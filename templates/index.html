@@ -224,10 +224,18 @@
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'downloaded_files.zip'; // Name of the zip file
+                    a.download = 'downloaded_files.zip'; 
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
+                    console.log("file downloaded")
+                    fetch('/download-multi-cleanup/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    })
                 })
                 .catch(error => console.error('Error downloading files:', error));
         });
