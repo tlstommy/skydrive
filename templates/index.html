@@ -49,6 +49,8 @@
             background: #fff;
         }
 
+        
+
     </style>
 </head>
 
@@ -132,8 +134,8 @@
             <div class="file-details-section p-4 border-2 w-1/2">
                 <h3 class='font-bold'>File Details</h3>
                 <hr>
-                <div id="file-preview-box">
-                    <iframe id="file-preview-iframe" width="100%" height="100%" src=""></iframe>
+                <div id="file-preview-box" class="flex justify-center items-center bg-gray-100 overflow-hidden h-96 ">
+                    <iframe id="file-preview-iframe" class="flex justify-center items-center  bg-gray-100  " width="100%" height="100%" src=""></iframe>
 
                 </div>
                 <div class="file-info">
@@ -181,7 +183,7 @@
             `;
             
     
-            previewFile(fileDetails.fileID);
+            previewFile(fileDetails.fileID,fileDetails);
             const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
             optionsButtons.style.display = 'block';
 
@@ -365,12 +367,20 @@
         }
 
         //file preview func
-        function previewFile(fileId) {
-            // Construct the URL to the backend route that serves the file preview
+        function previewFile(fileId,fileDetails) {
+
+            const fileType = fileDetails.filetype.toLowerCase();
+            const filePreviewIframe = document.getElementById('file-preview-iframe');
+
+            //the URL to the backend route that serves the file preview
             const filePreviewUrl = `/preview-file/${fileId}`;
             // Set the iframe source to the file preview URL
-            document.getElementById('file-preview-iframe').src = filePreviewUrl;
+            filePreviewIframe.src = filePreviewUrl;
+            
         }
+
+            
+        
 
 
         //on page load
