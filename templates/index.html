@@ -43,7 +43,7 @@
 
         #file-preview-box {
             width: 100%;
-            height: 500px; /* Adjust as needed */
+            height: 500px; 
             border: 1px solid #ccc;
             overflow: auto;
             background: #fff;
@@ -60,7 +60,7 @@
             </div>
         </header>
         <main class="flex flex-1">
-            <div class="p-8 w-2/3">
+            <div class="p-8 w-1/2">
 
                 <div>
 
@@ -129,9 +129,13 @@
                 </div>
             </div>
 
-            <div class="file-details-section p-4 border-2 w-1/3">
+            <div class="file-details-section p-4 border-2 w-1/2">
                 <h3 class='font-bold'>File Details</h3>
                 <hr>
+                <div id="file-preview-box">
+                    <iframe id="file-preview-iframe" width="100%" height="100%" src=""></iframe>
+
+                </div>
                 <div class="file-info">
                     <!-- File details will be inserted here -->
                 </div>
@@ -145,14 +149,10 @@
                     <button id="deleteButton" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-red">Delete File</button>
                 </div>
 
-                <div id="file-preview-box">
-                    <!-- File preview will be inserted here -->
-                </div>
+                
             </div>
 
-            <div class="w-1/3 p-4 border-2">
-                Device Info
-            </div>
+           
         </main>
     </div>
 
@@ -160,8 +160,8 @@
         var selectedFiles = []; //global array of selected files
         var individualFile = ""; //for single file selection
 
-        function getFileDetails(inode, name) {
-            fetch(`/get-file-details?inode=${inode}&name=${name}`)
+        function getFileDetails(inode, name, fullname) {
+            fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}`)
                 .then(response => response.json())
                 .then(fileDetails => updateFileDetailsPreview(fileDetails))
                 .catch(error => {
@@ -179,7 +179,9 @@
             <p>Size: ${fileDetails.size}</p>
             <p>Last Modified: ${fileDetails.last_modified}</p>
             `;
-
+            
+    
+            previewFile(fileDetails.fileID);
             const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
             optionsButtons.style.display = 'block';
 
@@ -192,7 +194,7 @@
             event.preventDefault();
             console.log("Delete")
 
-            const payload = { files: selectedFiles.map(file => file.name) };
+            const payload = { files: selectedFiles.map(file => file.fullname) };
 
             console.log(typeof (payload))
 
@@ -224,7 +226,9 @@
         //download multiple files, prob better than sending a spam of requests
         document.getElementById('downloadButtonMulti').addEventListener('click', function (event) {
             event.preventDefault();
-            const payload = { files: selectedFiles.map(file => file.name) };
+            const payload = { files: selectedFiles.map(file => file.fullname) };
+            console.log(payload)
+            console.log(selectedFiles)
             fetch('/download-multi/', {
                 method: 'POST',
                 headers: {
@@ -286,11 +290,11 @@
 
         function updateSingleSelect(row) {
             const fileName = row.querySelector(".file-name-col")?.textContent;
+            const fileNameFull = row.querySelector(".file-name-col")?.title;
             const fileSize = row.querySelector(".file-size-col")?.textContent;
             const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
             const fileInode = row.dataset.inode;
-
-            const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
+            const fileDetails = { inode: fileInode, name: fileName, fullname: fileNameFull, size: fileSize, lastModified: fileLastMod };
             individualFile = fileDetails;
             console.log(individualFile);
         }
@@ -299,9 +303,10 @@
             const fileName = row.querySelector(".file-name-col")?.textContent;
             const fileSize = row.querySelector(".file-size-col")?.textContent;
             const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
+            const fileNameFull = row.querySelector(".file-name-col")?.title;
             const fileInode = row.dataset.inode;
 
-            const fileDetails = { inode: fileInode, name: fileName, size: fileSize, lastModified: fileLastMod };
+            const fileDetails = { inode: fileInode, name: fileName, fullname: fileNameFull, size: fileSize, lastModified: fileLastMod };
 
             if (isChecked) {
 
@@ -342,9 +347,10 @@
                     files.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
+
                         row.innerHTML = `
                             <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
-                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name}</td>
+                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
                             <td class="file-size-col py-2 w-1/6">${file.size}</td>
                             <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
                         `;
@@ -356,6 +362,14 @@
                         });
                     });
                 });
+        }
+
+        //file preview func
+        function previewFile(fileId) {
+            // Construct the URL to the backend route that serves the file preview
+            const filePreviewUrl = `/preview-file/${fileId}`;
+            // Set the iframe source to the file preview URL
+            document.getElementById('file-preview-iframe').src = filePreviewUrl;
         }
 
 
@@ -381,7 +395,10 @@
                     this.querySelectorAll('tr').forEach(row => row.classList.remove('selected-single'));
                     targetRow.classList.add('selected-single');
                     updateSingleSelect(targetRow);
-                    getFileDetails(individualFile.inode, individualFile.name);
+                    console.log(individualFile)
+                    console.log(individualFile.fileNameFull)
+                    
+                    getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname);
 
                 }
             });

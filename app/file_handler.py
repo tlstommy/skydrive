@@ -18,39 +18,43 @@ class FileHandler:
             stat = os.stat(full_path)
             dataDict = {
                 'inode': stat.st_ino,
+                'truncate_name': 'test',
                 'name': secure_filename(file),
                 'size': size(stat.st_size),
-                'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+                'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
             }
             file_list.append(dataDict)
         return file_list
 
 
     #get info of a file
-    def get_file_info(self, inode, filename):
+    def get_file_info(self, inode, filename, filename_full):
         fileDetailsDict = {}
         
-        print(inode,filename)
-        stat = os.stat(os.path.join(self.device_files_folder,filename))
+        print(inode,filename,filename_full)
+        stat = os.stat(os.path.join(self.device_files_folder,filename_full))
+        filename = filename_full
+        print(stat)
 
         # check if the files match
         if(stat.st_ino != inode):
-            print("ERROR! Das a big problem.")
-
-        print(f"Filename: {filename}")
-        print(f"Inode: {stat.st_ino}")
-        print(f"Size: {stat.st_size} bytes")
-        print(f"Permissions: {oct(stat.st_mode)}")
-        print(f"Last modified: {stat.st_mtime}")
+            print('ERROR! file mismatch.')
+        
+        print(f'Filename: {filename}')
+        print(f'Inode: {stat.st_ino}')
+        print(f'Size: {stat.st_size} bytes')
+        print(f'Permissions: {oct(stat.st_mode)}')
+        print(f'Last modified: {stat.st_mtime}')
 
         filename,filetype = os.path.splitext(filename)
 
         fileDetailsDict = {
-            "inode": stat.st_ino,
-            "filename": filename,
-            "filetype": filetype,
-            "size": size(stat.st_size),
-            "last_modified": datetime.datetime.fromtimestamp(stat.st_mtime).strftime("%d/%m/%Y, %H:%M:%S"),
+            'inode': stat.st_ino,
+            'filename': filename,
+            'filetype': filetype,
+            'size': size(stat.st_size),
+            'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%d/%m/%Y, %H:%M:%S'),
+            'fileID':str(filename+filetype)
         }
 
         print(fileDetailsDict)
@@ -59,7 +63,7 @@ class FileHandler:
 
     #download a single file
     def download_file(self, filename):
-        print("download single file run")
+        print('download single file run')
         filename = secure_filename(filename)
         return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
         
@@ -70,7 +74,7 @@ class FileHandler:
         os.remove(zipFP)
 
     def download_multiple_files(self,files):
-        print("download multi call")
+        print('download multi call')
 
         zipFilename = 'downloaded_files.zip'
         zipFP = os.path.join(self.device_files_folder, zipFilename)
@@ -103,7 +107,7 @@ class FileHandler:
 
     #del multiple files
     def delete_multiple_files(self,files):
-        print("delete multi call")
+        print('delete multi call')
         print(files)
         for file in files:
             filename = secure_filename(file)
@@ -116,9 +120,11 @@ class FileHandler:
             if file:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(self.device_files_folder, filename))
-        return {"success": True, "message": "Files uploaded successfully"}
+        return {'success': True, 'message': 'Files uploaded successfully'}
     
     #preview files
     def preview_file(self,filename):
-        print('preview file ran,')
-        print(f'ran on {filename}')
+        filename = secure_filename(filename)
+        print(f'preview file ran, {filename}')
+        return send_from_directory(directory=self.device_files_folder, path=filename)
+        

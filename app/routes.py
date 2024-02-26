@@ -17,8 +17,10 @@ def list_files():
 def get_file_info():
     inode = int(request.args['inode'])
     filename = request.args['name']
+    filename_full = request.args['fullname']
+    print(request.args)
     try:
-        file_info = file_handler.get_file_info(inode, filename)
+        file_info = file_handler.get_file_info(inode, filename,filename_full)
         return jsonify(file_info)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
