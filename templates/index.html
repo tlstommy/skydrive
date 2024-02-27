@@ -46,7 +46,24 @@
             height: 60vh; 
             border: 1px solid #ccc;
             overflow: auto;
-            background: #fff;
+            background: #eee;
+        }
+
+        /* tailwinds breakpoint system just in raw CSS*/
+        .flex-container {
+            display: flex;
+            flex-direction: column; /* This is the default direction, so it's optional to include */
+        }
+
+        /* md */
+        @media (min-width: 768px) {
+            .flex-container {
+                flex-direction: row;
+            }
+        }
+
+        .flex-item {
+            flex-grow: 2;
         }
 
         
@@ -61,81 +78,79 @@
                 <h1 class="text-2xl font-bold">WPSD - prototype</h1>
             </div>
         </header>
-        <main class="flex flex-1">
-            <div class="p-8 w-1/2">
+        <div class="flex-container flex-item">
+            <div class="p-8 w-full md:flex-1">
 
-                <div>
+                
 
-                    <div class="mb-4">
-                        <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                <div class="mb-4">
+                    <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                </div>
+                <div class="flex flex-col w-full">
+
+
+                    <p class="font-semibold mb-4">Files On Device</p>
+
+                    <!-- Scrollable table body -->
+                    <div class="scrollable-table-body">
+                        <table class="w-full text-left table-fixed">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="px-4 py-2 w-2"><input type="checkbox"
+                                            class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
+                                    <th class="py-2 w-1/2">Name</th>
+                                    <th class="py-2 w-1/6">File Size</th>
+                                    <th class="py-2 w-1/4">Last Modified</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fileList" class="divide-y divide-gray-200">
+                                <!-- files from flaskt -->
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="flex flex-col w-full">
-
-
-                        <p class="font-semibold mb-4">Files On Device</p>
-
-                        <!-- Scrollable table body -->
-                        <div class="scrollable-table-body">
-                            <table class="w-full text-left table-fixed">
-                                <thead>
-                                    <tr class="bg-gray-100">
-                                        <th class="px-4 py-2 w-2"><input type="checkbox"
-                                                class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
-                                        <th class="py-2 w-1/2">Name</th>
-                                        <th class="py-2 w-1/6">File Size</th>
-                                        <th class="py-2 w-1/4">Last Modified</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fileList" class="divide-y divide-gray-200">
-                                    <!-- files from flaskt -->
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                    <form method="post" enctype=multipart/form-data id="file-upload-form">
-                        <div class="py-8">
-
-                            <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
-                                Upload file(s)
-                            </label>
-                            <input
-                                class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
-                                id="multiple_files" type="file" name="file" multiple>
-                            <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="uploadButton"
-                                type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
-                        </div>
-                    </form>
-                    <form method="post" enctype=multipart/form-data id="file-upload-form"
-                        class="multi-files-options-section">
-                        <div class="py-4">
-
-                            <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900"
-                                for="multiple_files">
-                                Selected file(s):
-                            </label>
-
-                            <a id="downloadButtonMulti" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300"
-                                download>
-                                Download Selected Files
-                            </a>
-
-                            <button id="deleteButtonMulti" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-blue-400">
-                                Delete Selected Files
-                            </button>
-
-
-                        </div>
-                    </form>
 
                 </div>
+                <form method="post" enctype=multipart/form-data id="file-upload-form">
+                    <div class="py-8">
+
+                        <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                            Upload file(s)
+                        </label>
+                        <input
+                            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                            id="multiple_files" type="file" name="file" multiple>
+                        <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="uploadButton"
+                            type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
+                    </div>
+                </form>
+                <form method="post" enctype=multipart/form-data id="file-upload-form"
+                    class="multi-files-options-section">
+                    <div class="py-4">
+
+                        <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900"
+                            for="multiple_files">
+                            Selected file(s):
+                        </label>
+
+                        <a id="downloadButtonMulti" class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300"
+                            download>
+                            Download Selected Files
+                        </a>
+
+                        <button id="deleteButtonMulti" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-blue-400">
+                            Delete Selected Files
+                        </button>
+
+
+                    </div>
+                </form>
             </div>
 
-            <div class="file-details-section p-4 border-2 w-1/2">
+            <div class="file-details-section p-4  w-full md:flex-1">
                 <h3 class='font-bold'>File Details</h3>
                 <hr>
-                <div id="file-preview-box" class="flex justify-center items-center bg-gray-100 overflow-hidden h-96 ">
-                    <iframe id="file-preview-iframe" class="flex justify-center items-center  bg-gray-100  " width="100%" height="100%" src=""></iframe>
+                <div id="file-preview-box" class="flex justify-center items-center overflow-hidden h-96 ">
+                    <iframe id="file-preview-iframe" class="flex justify-center items-center " width="100%" height="100%" src=""></iframe>
 
                 </div>
                 <div class="file-info">
@@ -155,7 +170,7 @@
             </div>
 
            
-        </main>
+        </div>
     </div>
 
     <script>
