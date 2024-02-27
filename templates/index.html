@@ -379,7 +379,33 @@
             
         }
 
-            
+
+        //adjust sizing of preview content upon iframe loads
+        document.getElementById('file-preview-iframe').onload = function() {
+            //get iframe
+            const iframe = document.getElementById('file-preview-iframe');
+            try {
+                
+                var iframeContent = iframe.contentDocument || iframe.contentWindow.document;
+                //add css
+                iframeContent.body.style.margin = "0";
+                iframeContent.body.style.padding = "0";
+                iframeContent.body.style.display = "flex";
+                iframeContent.body.style.justifyContent = "center";
+                iframeContent.body.style.alignItems = "center";
+                
+                //add styling to images in the iframe so they arent zoomed in
+                var imgs = iframeContent.getElementsByTagName('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].style.maxWidth = "100%";
+                    imgs[i].style.maxHeight = "100%";
+                    imgs[i].style.objectFit = "contain";
+                }
+            } catch (e) {
+                console.error("Error adjusting iframe content: ", e);
+            }
+        };
+  
         
 
 
