@@ -124,7 +124,13 @@ class FileHandler:
     
     #preview files
     def preview_file(self,filename):
+
+        validPreviewExts = ['jpg','png','jpeg','gif','webm','pdf','pdf']
+        
+
         filename = secure_filename(filename)
+        
+        print(filename.split('.')[-1])
         print(f'preview file ran, {filename}')
-        return send_from_directory(directory=self.device_files_folder, path=filename)
+        return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)
         
