@@ -3,12 +3,15 @@ from hurry.filesize import size
 from werkzeug.utils import secure_filename
 from flask import send_from_directory,send_file
 import zipfile
+import mimetypes
 
 
 #file ops
 class FileHandler:
     def __init__(self, files_folder):
         self.device_files_folder = files_folder
+        mimetypes.init()
+
 
     #get list of the files
     def get_file_list(self):
@@ -122,14 +125,27 @@ class FileHandler:
                 file.save(os.path.join(self.device_files_folder, filename))
         return {'success': True, 'message': 'Files uploaded successfully'}
     
+    def convert_to_pdf(self,mode,file):
+        return
+
     #preview files
     def preview_file(self,filename):
 
         validPreviewExts = ['jpg','png','jpeg','gif','webm','pdf','pdf']
-        
-
         filename = secure_filename(filename)
         
+        filetype,encoding = mimetypes.guess_type(filename)
+        print(filetype)
+        print(encoding)
+        print(type(encoding))
+        #unsupported mimetype
+        if(filetype == None and encoding == None):
+            return f"Unable to preview file, {filename}."
+        
+        if(('application/vnd.openxmlformats' in filetype) and encoding != 'pdf'):
+            return f"Unable to preview file, {filename}. pdf"
+        if('application/vnd.ms-excel' in filetype and encoding == None):
+            return f"Unable to preview file, {filename}.  csv"
         print(filename.split('.')[-1])
         print(f'preview file ran, {filename}')
         return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)
