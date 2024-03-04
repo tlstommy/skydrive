@@ -283,7 +283,7 @@
             const fileDetails = individualFile;
             console.log("Delete")
             console.log(fileDetails)
-            fetch(`/delete/${fileDetails.name}`, { method: 'DELETE' })
+            fetch(`/delete/${fileDetails.fullname}`, { method: 'DELETE' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
