@@ -76,6 +76,7 @@
         <header class="border-b-2 p-4">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold">WPSD - prototype</h1>
+                <a class="text-xl font-bold pr-4" href="/settings">Settings</a>
             </div>
         </header>
         <div class="flex-container flex-item">
@@ -353,6 +354,10 @@
             row.classList.toggle('selected', isChecked);
             updateSelectedFiles(row, isChecked);
         }
+
+
+
+        
 
         function loadFileList() {
             fetch('/files')

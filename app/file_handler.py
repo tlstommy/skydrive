@@ -32,7 +32,7 @@ class FileHandler:
 
     #get info of a file
     def get_file_info(self, inode, filename, filename_full):
-        fileDetailsDict = {}
+        file_details_dict = {}
         
         print(inode,filename,filename_full)
         stat = os.stat(os.path.join(self.device_files_folder,filename_full))
@@ -51,7 +51,7 @@ class FileHandler:
 
         filename,filetype = os.path.splitext(filename)
 
-        fileDetailsDict = {
+        file_details_dict = {
             'inode': stat.st_ino,
             'filename': filename,
             'filetype': filetype,
@@ -60,9 +60,9 @@ class FileHandler:
             'fileID':str(filename+filetype)
         }
 
-        print(fileDetailsDict)
+        print(file_details_dict)
 
-        return fileDetailsDict
+        return file_details_dict
 
     #download a single file
     def download_file(self, filename):
@@ -72,19 +72,19 @@ class FileHandler:
         
     #download multiple files
     def download_multiple_files_cleanup(self):
-        zipFilename = 'downloaded_files.zip'
-        zipFP = os.path.join(self.device_files_folder, zipFilename)
-        os.remove(zipFP)
+        zipfile_name = 'downloaded_files.zip'
+        zipfile_path = os.path.join(self.device_files_folder, zipfile_name)
+        os.remove(zipfile_path)
 
     def download_multiple_files(self,files):
         print('download multi call')
 
-        zipFilename = 'downloaded_files.zip'
-        zipFP = os.path.join(self.device_files_folder, zipFilename)
+        zipfile_name = 'downloaded_files.zip'
+        zipfile_path = os.path.join(self.device_files_folder, zipfile_name)
 
 
         #make a zip of the selected files
-        with zipfile.ZipFile(zipFP, 'w') as zipf:
+        with zipfile.ZipFile(zipfile_path, 'w') as zipf:
             for file in files:
                 
                 filename = secure_filename(file)
@@ -96,7 +96,7 @@ class FileHandler:
                 else:
                     print(f'File not found: {file}')
 
-        sentfile = send_file(zipFP)
+        sentfile = send_file(zipfile_path)
 
         #intercept another request after this to delete the zip
         return sentfile
@@ -131,7 +131,7 @@ class FileHandler:
     #preview files
     def preview_file(self,filename):
 
-        validPreviewExts = ['jpg','png','jpeg','gif','webm','pdf','pdf']
+        valid_preview_exts = ['jpg','png','jpeg','gif','webm','pdf','pdf']
         filename = secure_filename(filename)
         
         filetype,encoding = mimetypes.guess_type(filename)
