@@ -355,18 +355,23 @@
             updateSelectedFiles(row, isChecked);
         }
 
-
-
+        //file searchterm
+        document.querySelector('[placeholder="File filter/search"]').addEventListener('input', function(e) {
+            const searchTerm = this.value.toLowerCase();
+            loadFileList(searchTerm);
+        });
         
 
-        function loadFileList() {
+        function loadFileList(searchTerm = '') {
             fetch('/files')
                 .then(response => response.json())
                 .then(files => {
                     const fileListElement = document.getElementById('fileList');
                     fileListElement.innerHTML = '';
+                    
+                    const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
 
-                    files.forEach(file => {
+                    filteredFiles.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
 
