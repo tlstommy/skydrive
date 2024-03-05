@@ -1,6 +1,6 @@
 from app import app
 from app.file_handler import FileHandler
-from flask import render_template, jsonify, request, send_from_directory
+from flask import render_template, jsonify, request, send_from_directory,make_response
 from werkzeug.utils import secure_filename
 
 #routes for requests and such
@@ -92,7 +92,9 @@ def upload_to_device():
 #preview file call,figure out what to do for pdf/img/office docs
 @app.route('/preview-file/<filename>', methods=['GET'])
 def preview_file(filename):
-    return file_handler.preview_file(filename)
+    resp = make_response(file_handler.preview_file(filename))
+    resp.headers['Content-Disposition'] = 'inline'
+    return resp
 
 
 #home
@@ -100,3 +102,4 @@ def preview_file(filename):
 def index():
     files = file_handler.get_file_list()
     return render_template("index.html", file_list=files)
+

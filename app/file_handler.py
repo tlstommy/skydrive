@@ -131,7 +131,7 @@ class FileHandler:
     #preview files
     def preview_file(self,filename):
 
-        valid_preview_exts = ['jpg','png','jpeg','gif','webm','pdf','pdf']
+        valid_application_types = ['pdf','pdf']
         filename = secure_filename(filename)
         
         filetype,encoding = mimetypes.guess_type(filename)
@@ -142,10 +142,10 @@ class FileHandler:
         if(filetype == None and encoding == None):
             return f"Unable to preview file, {filename}."
         
-        if(('application/vnd.openxmlformats' in filetype) and encoding != 'pdf'):
-            return f"Unable to preview file, {filename}. pdf"
-        if('application/vnd.ms-excel' in filetype and encoding == None):
-            return f"Unable to preview file, {filename}.  csv"
+        if(filetype.split("/")[0] == 'application' and encoding == None):
+            if(filetype.split("/")[1] not in valid_application_types):
+                return f"Unable to preview file, {filename}."
+        
         print(filename.split('.')[-1])
         print(f'preview file ran, {filename}')
         return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)

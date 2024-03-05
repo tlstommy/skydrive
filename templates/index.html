@@ -370,7 +370,7 @@
                     fileListElement.innerHTML = '';
                     
                     const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
-
+                    filteredFiles.sort()
                     filteredFiles.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
