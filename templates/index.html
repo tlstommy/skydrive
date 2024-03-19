@@ -37,7 +37,7 @@
                     <div class="scrollable-table-body">
                         <table class="w-full text-left table-fixed">
                             <thead>
-                                <tr class="bg-gray-100">
+                                <tr id="tableheader-head">
                                     <th class="px-4 py-2 w-2"><input type="checkbox"
                                             class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
                                     <th class="py-2 w-1/2">Name</th>
@@ -55,11 +55,11 @@
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
                     <div class="py-8">
 
-                        <label class="block mb-2 text-sm font-medium text-gray-900" for="multiple_files">
+                        <label class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
                         </label>
                         <input
-                            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
+                            class="block w-full p-2 text-sm border border-gray-300 rounded-lg cursor-pointer  focus:outline-none"
                             id="multiple_files" type="file" name="file" multiple>
                         <button class="border-2 p-2 mt-2 mr-4" id="uploadButton"
                             type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
@@ -69,7 +69,7 @@
                     class="multi-files-options-section">
                     <div class="py-4">
 
-                        <label class="selected-files-label block mb-2 text-sm font-medium text-gray-900"
+                        <label class="selected-files-label block mb-2 text-sm font-medium"
                             for="multiple_files">
                             Selected file(s):
                         </label>
