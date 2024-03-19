@@ -96,6 +96,12 @@ def preview_file(filename):
     resp.headers['Content-Disposition'] = 'inline'
     return resp
 
+#settings/help page
+#home
+@app.route("/settings", methods=['GET'])
+def settings():
+    
+    return render_template("settings.html")
 
 #home
 @app.route("/", methods=['GET'])

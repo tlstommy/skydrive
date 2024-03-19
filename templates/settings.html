@@ -6,9 +6,68 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/theme.css')}}">
-    <title>WPSD - prototype</title>
+    <title>WPSD // Settings</title>
     <style>
+        /* table body */
+        .scrollable-table-body {
+            display: block;
+            max-height: 24em;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+
+        /* make cols of same width for header and body */
+        .table-header table,
+        .scrollable-table-body table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .selected {
+
+            background-color: #dfdfdf;
+        }
+
+        .selected-single {
+
+            background-color: #6969ed;
+            border: black;
+            border-width: 2px;
+        }
+
+        .file-options-buttons,
+        .multi-files-options-section {
+            display: none;
+            /* Hide initially */
+        }
+
+        #file-preview-box {
+            width: 100%;
+            height: 60vh; 
+            border: 1px solid #ccc;
+            overflow: auto;
+            background: #eee;
+        }
+
+        /* tailwinds breakpoint system just in raw CSS*/
+        .flex-container {
+            display: flex;
+            flex-direction: column; /* This is the default direction, so it's optional to include */
+        }
+
+        /* md */
+        @media (min-width: 768px) {
+            .flex-container {
+                flex-direction: row;
+            }
+        }
+
+        .flex-item {
+            flex-grow: 2;
+        }
+
+        
+
     </style>
 </head>
 
@@ -61,7 +120,7 @@
                         <input
                             class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none"
                             id="multiple_files" type="file" name="file" multiple>
-                        <button class="border-2 p-2 mt-2 mr-4" id="uploadButton"
+                        <button class="border-2 p-2 mt-2 mr-4 bg-gray-50 hover:bg-blue-300" id="uploadButton"
                             type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
                     </div>
                 </form>
@@ -409,7 +468,6 @@
 
             //send a post request to upload files
             document.getElementById('uploadButton').addEventListener('click', function (event) {
-                var xhr = new XMLHttpRequest();
                 event.preventDefault();
                 var formData = new FormData(document.getElementById('file-upload-form'));
                 fetch('/upload', {
