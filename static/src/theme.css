@@ -1,0 +1,148 @@
+/* Base background and text colors */
+
+body {
+    background-color: #0d1118;
+    /* Dark background */
+    color: #e0e0e0;
+    /* Light text */
+  }
+  
+  /* Header styling */
+  
+  header {
+    background-color: #252525;
+    border-bottom: 2px solid #010404;
+    padding: 16px;
+  }
+  
+  header h1, header a {
+    color: #e0e0e0;
+    /* Light text */
+  }
+  
+  /* Adjust link styles */
+  
+  a {
+    color: #757bfc;
+    /* blueish link color */
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: #3700b3;
+  }
+  
+  /* Form and button styling */
+  
+  form {
+    margin: 16px 0;
+  }
+  
+  text{
+    color: #e0e0e0;
+  }
+  
+  input, button, #uploadButton, #downloadButton, #deleteButton, #downloadButtonMulti, #deleteButtonMulti {
+    background-color: #333;
+    /* Darker elements background */
+    color: #e0e0e0;
+    /* Light text */
+    border: 1px solid #444;
+    /* Slightly lighter border */
+    padding: 8px;
+    margin-top: 8px;
+    /* Space out elements */
+    border-radius: 4px;
+    /* Rounded corners */
+  }
+  
+  #uploadButton{
+    width: 100%;
+    /* Full width inputs and buttons */
+  }
+  
+  button:hover, #uploadButton:hover,#downloadButton:hover, #deleteButton:hover, #downloadButtonMulti:hover, #deleteButtonMulti:hover {
+    background-color: #555;
+    /* Lighter background on hover */
+    border: 1px solid #fff;
+    /*white border */
+  }
+  
+  /* Scrollable table body */
+  
+  .scrollable-table-body {
+    border: 1px solid #444;
+    display: block;
+    max-height: 24em;
+    overflow-y: auto;
+  }
+  
+  /* Table header */
+  
+  .table-header table, .scrollable-table-body table {
+    width: 100%;
+    background-color: #212121;
+    table-layout: fixed;
+  }
+  
+  #tableheader-head{
+    background-color: #333;
+  }
+  
+  /* Selected files */
+  
+  .selected {
+    background-color: #6991ed;
+  }
+  
+  .selected-single {
+    background-color: #6969ed;
+    border: black;
+    border-width: 2px;
+  }
+  
+  .file-options-buttons,
+  .multi-files-options-section {
+    display: none;
+    /* Hide initially */
+  }
+  
+  /* File preview box */
+  
+  #file-preview-box {
+    width: 100%;
+    height: 60vh;
+    overflow: auto;
+    background: #333;
+    border: 1px solid #444;
+  }
+  
+  #multiple_files {
+    background-color: #222;
+    /* Darker elements background */
+    color: #e0e0e0;
+    /* Light text */
+    border: 1px solid #444;
+    /* Slightly lighter border */
+  }
+  
+  /* tailwinds breakpoint system just in raw CSS*/
+  
+  .flex-container {
+    display: flex;
+    flex-direction: column;
+    /* This is the default direction, so it's optional to include */
+  }
+  
+  /* md */
+  
+  @media (min-width: 768px) {
+    .flex-container {
+      flex-direction: row;
+    }
+  }
+  
+  .flex-item {
+    flex-grow: 2;
+  }
+  

@@ -54,10 +54,13 @@
                 </div>
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
                     <div class="py-8">
-
+                                             
                         <label class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
                         </label>
+                        <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
+                            <div id="upload-progress-bar" style="height: 24px; background-color: #55be58; width: 0%;">&nbsp; Uploading - 0%</div>
+                        </div>    
                         <input
                             class="block w-full p-2 text-sm border border-gray-300 rounded-lg cursor-pointer  focus:outline-none"
                             id="multiple_files" type="file" name="file" multiple>
@@ -90,7 +93,7 @@
 
             <div class="file-details-section p-4 w-full border-l md:flex-1">
                 <h3 class='font-bold'>File Details</h3>
-                <hr>
+                <br>
                 <div id="file-preview-box" class="flex justify-center items-center overflow-hidden h-96 ">
                     <iframe id="file-preview-iframe" class="flex justify-center items-center " width="100%" height="100%" src="" ></iframe>
 
@@ -409,19 +412,44 @@
 
             //send a post request to upload files
             document.getElementById('uploadButton').addEventListener('click', function (event) {
-                var xhr = new XMLHttpRequest();
                 event.preventDefault();
                 var formData = new FormData(document.getElementById('file-upload-form'));
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                    .then(data => {
-                        console.log(data);
+                
+                //progress bar
+                document.getElementById('upload-progress-container').style.display = 'block';
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload', true);
+
+
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        var percentage = (e.loaded / e.total) * 100;
+                        document.getElementById('upload-progress-bar').style.width = percentage + '%';
+                        document.getElementById('upload-progress-bar').innerText = ' ' + Math.round(percentage) + '%';
+                    }
+                };
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // Success
+                        console.log(JSON.parse(xhr.responseText));
+                        document.getElementById('upload-progress-container').style.display = 'none'; // Hide progress bar
                         loadFileList(); // Reload the file list
-                    }).catch(error => {
-                        console.error('Upload Error:', error);
-                    });
+                    } else {
+                        // Error
+                        console.error('Upload Error:', xhr.responseText);
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error('Upload failed.');
+                };
+
+                xhr.send(formData);
+                            
+                            
+                            
+
             });
         };
     </script>
