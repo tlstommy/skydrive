@@ -1,7 +1,7 @@
 import os, datetime
 from hurry.filesize import size
 from werkzeug.utils import secure_filename
-from flask import send_from_directory,send_file
+from flask import send_from_directory,send_file,jsonify
 import zipfile
 import mimetypes
 
@@ -14,20 +14,24 @@ class FileHandler:
 
 
     #get list of the files
-    def get_file_list(self):
+    def get_file_list(self, relative_path=""):
+        path = os.path.join(self.device_files_folder, relative_path.strip("/"))
         file_list = []
-        for file in os.listdir(self.device_files_folder):
-            full_path = os.path.join(self.device_files_folder, file)
+        for item in os.listdir(path):
+            full_path = os.path.join(path, item)
             stat = os.stat(full_path)
+            is_directory = os.path.isdir(full_path)
             dataDict = {
                 'inode': stat.st_ino,
-                'truncate_name': 'test',
-                'name': secure_filename(file),
-                'size': size(stat.st_size),
-                'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+                'name': secure_filename(item),
+                'size': size(stat.st_size) if not is_directory else "—",
+                'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
+                'is_directory': is_directory,
+                'path': os.path.join(relative_path, item).strip("/")  # Include relative path for navigation
             }
             file_list.append(dataDict)
         return file_list
+
 
 
     #get info of a file
@@ -49,6 +53,13 @@ class FileHandler:
         print(f'Permissions: {oct(stat.st_mode)}')
         print(f'Last modified: {stat.st_mtime}')
 
+
+        #check if its a dir
+        is_directory = os.path.isdir(os.path.join(self.device_files_folder,filename_full))
+        print("is dir?: " , is_directory)
+
+        
+
         filename,filetype = os.path.splitext(filename)
 
         file_details_dict = {
@@ -57,7 +68,9 @@ class FileHandler:
             'filetype': filetype,
             'size': size(stat.st_size),
             'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%d/%m/%Y, %H:%M:%S'),
-            'fileID':str(filename+filetype)
+            'fileID':str(filename+filetype),
+            'is_dir':is_directory,
+            'path':str(os.path.join(self.device_files_folder,filename_full))
         }
 
         print(file_details_dict)

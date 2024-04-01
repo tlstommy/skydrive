@@ -10,7 +10,13 @@ file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
 #call to get file list
 @app.route('/files', methods=['GET'])
 def list_files():
-    return jsonify(file_handler.get_file_list())
+    print("/files areg")
+    print(request.args)
+
+    if(request.args['path']):
+        return jsonify(file_handler.get_file_list(request.args['path']))
+    else:
+        return jsonify(file_handler.get_file_list())
 
 #call to get file details
 @app.route('/get-file-details', methods=['GET'])
@@ -98,9 +104,9 @@ def preview_file(filename):
 
 #settings/help page
 #home
-@app.route("/settings", methods=['GET'])
+@app.route("/settings", methods=['GET','POST'])
 def settings():
-    
+    print("req ",request.form)    
     return render_template("settings.html")
 
 #home

@@ -27,6 +27,7 @@
 
                 <div class="mb-4">
                     <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                    <button id="backButton" class="border-2 p-2 mt-2">Back</button>
                 </div>
                 <div class="flex flex-col w-full">
 
@@ -121,6 +122,7 @@
     <script>
         var selectedFiles = []; //global array of selected files
         var individualFile = ""; //for single file selection
+        let currentPath = ''; //current directory path
 
         function getFileDetails(inode, name, fullname) {
             fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}`)
@@ -134,6 +136,10 @@
 
         function updateFileDetailsPreview(fileDetails) {
             console.log(fileDetails);
+            if(fileDetails.is_dir){
+                
+                loadFileList('',fileDetails.path)
+            }
             const fileDetailsInfo = document.querySelector('.file-details-section .file-info');
             fileDetailsInfo.innerHTML = `
             <p>Filename: ${fileDetails.filename}</p>
@@ -306,8 +312,11 @@
         });
         
 
-        function loadFileList(searchTerm = '') {
-            fetch('/files')
+        function loadFileList(searchTerm = '', path = '') {
+            console.log(path)
+            currentPath = path;
+            console.log("current path: " +currentPath)
+            fetch(`/files?path=${encodeURIComponent(currentPath)}`)
                 .then(response => response.json())
                 .then(files => {
                     const fileListElement = document.getElementById('fileList');
@@ -376,7 +385,16 @@
             }
         };
   
-        
+        function goBackUpDir() {
+            const pathArray = currentPath.split('/').filter(Boolean);
+            pathArray.pop(); // Remove the last segment of the current path
+            const newPath = pathArray.join('/');
+            loadFileList('', newPath);
+        }
+
+        //file back button
+        document.getElementById('backButton').addEventListener('click', goBackUpDir);
+
 
 
         //on page load
@@ -451,6 +469,7 @@
                             
 
             });
+            
         };
     </script>
 </body>
