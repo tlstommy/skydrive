@@ -14,7 +14,7 @@ def list_files():
     print(request.args)
 
     if(request.args['path']):
-        return jsonify(file_handler.get_file_list(relative_path=request.args['path']))
+        return jsonify(file_handler.get_file_list(request.args['path']))
     else:
         return jsonify(file_handler.get_file_list())
 
@@ -24,10 +24,9 @@ def get_file_info():
     inode = int(request.args['inode'])
     filename = request.args['name']
     filename_full = request.args['fullname']
-    path = request.args['path']
     print(request.args)
     try:
-        file_info = file_handler.get_file_info(inode, filename,filename_full,path)
+        file_info = file_handler.get_file_info(inode, filename,filename_full)
         return jsonify(file_info)
     except Exception as e:
         return jsonify({"error": str(e)}), 400
