@@ -162,4 +162,3 @@ class FileHandler:
         print(filename.split('.')[-1])
         print(f'preview file ran, {filename}')
         return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)
-        

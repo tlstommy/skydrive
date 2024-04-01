@@ -124,8 +124,8 @@
         var individualFile = ""; //for single file selection
         let currentPath = ''; //current directory path
 
-        function getFileDetails(inode, name, fullname) {
-            fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}`)
+        function getFileDetails(inode, name, fullname,path) {
+            fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}&path=${encodeURIComponent(path)}`)
                 .then(response => response.json())
                 .then(fileDetails => updateFileDetailsPreview(fileDetails))
                 .catch(error => {
@@ -314,7 +314,7 @@
 
         function loadFileList(searchTerm = '', path = '') {
             console.log(path)
-            currentPath = path;
+            currentPath = path || currentPath;
             console.log("current path: " +currentPath)
             fetch(`/files?path=${encodeURIComponent(currentPath)}`)
                 .then(response => response.json())
@@ -336,6 +336,13 @@
                         `;
 
                         fileListElement.appendChild(row);
+                        if (file.is_directory) {
+                            row.addEventListener('click', () => {
+                                const newPath = `${currentPath}\\${file.name}`;
+                                console.log('Directory clicked, new path:', newPath); 
+                                loadFileList('', newPath);
+                            });
+                        }
 
                         row.querySelector('.filelist-checkbox').addEventListener('change', function () {
                             handleCheckboxChange(this);
@@ -387,8 +394,13 @@
   
         function goBackUpDir() {
             const pathArray = currentPath.split('/').filter(Boolean);
+            if(pathArray.length === 0) {
+                console.log('Already at root. Cannot go back.'); // Debugging line
+                return; // Already at the root directory
+            }
             pathArray.pop(); // Remove the last segment of the current path
             const newPath = pathArray.join('/');
+            console.log('Going back. New path:', newPath); // Debugging line
             loadFileList('', newPath);
         }
 
@@ -422,7 +434,7 @@
                     console.log(individualFile)
                     console.log(individualFile.fileNameFull)
                     
-                    getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname);
+                    getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname,individualFile.path);
 
                 }
             });
@@ -474,4 +486,4 @@
     </script>
 </body>
 
-</html>
+</html>\

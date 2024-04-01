@@ -114,4 +114,3 @@ def settings():
 def index():
     files = file_handler.get_file_list()
     return render_template("index.html", file_list=files)
-
