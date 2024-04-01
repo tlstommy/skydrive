@@ -16,6 +16,7 @@ class FileHandler:
     #get list of the files
     def get_file_list(self, relative_path=""):
         path = os.path.join(self.device_files_folder, relative_path.strip("/"))
+        print("path: ",path)
         file_list = []
         for item in os.listdir(path):
             full_path = os.path.join(path, item)
@@ -27,7 +28,7 @@ class FileHandler:
                 'size': size(stat.st_size) if not is_directory else "—",
                 'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
                 'is_directory': is_directory,
-                'path': os.path.join(relative_path, item).strip("/")  # Include relative path for navigation
+                'path': path  
             }
             file_list.append(dataDict)
         return file_list
@@ -35,10 +36,10 @@ class FileHandler:
 
 
     #get info of a file
-    def get_file_info(self, inode, filename, filename_full):
+    def get_file_info(self, inode, filename, filename_full,path):
         file_details_dict = {}
         
-        print(inode,filename,filename_full)
+        print(inode,filename,filename_full,path)
         stat = os.stat(os.path.join(self.device_files_folder,filename_full))
         filename = filename_full
         print(stat)

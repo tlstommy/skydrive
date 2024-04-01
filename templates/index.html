@@ -124,10 +124,14 @@
         var individualFile = ""; //for single file selection
         let currentPath = ''; //current directory path
 
-        function getFileDetails(inode, name, fullname,path) {
+        function getFileDetails(inode, name, fullname) {
+            const path = encodeURIComponent(currentPath);
             fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}&path=${encodeURIComponent(path)}`)
                 .then(response => response.json())
-                .then(fileDetails => updateFileDetailsPreview(fileDetails))
+                .then(fileDetails => {
+                    currentPath = fileDetails.path; 
+                    updateFileDetailsPreview(fileDetails);
+                })
                 .catch(error => {
                     console.error('Error fetching file details:', error);
                 });
@@ -136,6 +140,7 @@
 
         function updateFileDetailsPreview(fileDetails) {
             console.log(fileDetails);
+            currentPath = fileDetails.path;
             if(fileDetails.is_dir){
                 
                 loadFileList('',fileDetails.path)
@@ -257,12 +262,14 @@
 
 
         function updateSingleSelect(row) {
+            console.log(row);
             const fileName = row.querySelector(".file-name-col")?.textContent;
             const fileNameFull = row.querySelector(".file-name-col")?.title;
             const fileSize = row.querySelector(".file-size-col")?.textContent;
             const fileLastMod = row.querySelector(".file-moddate-col")?.textContent;
             const fileInode = row.dataset.inode;
-            const fileDetails = { inode: fileInode, name: fileName, fullname: fileNameFull, size: fileSize, lastModified: fileLastMod };
+            const filePath = row.dataset.path;
+            const fileDetails = { inode: fileInode, name: fileName, fullname: fileNameFull, size: fileSize, lastModified: fileLastMod, path: currentPath };
             individualFile = fileDetails;
             console.log(individualFile);
         }
@@ -312,9 +319,9 @@
         });
         
 
-        function loadFileList(searchTerm = '', path = '') {
-            console.log(path)
-            currentPath = path || currentPath;
+        function loadFileList(searchTerm = '', newPath = '') {
+            console.log(newPath)
+            if (newPath !== '') currentPath = newPath;
             console.log("current path: " +currentPath)
             fetch(`/files?path=${encodeURIComponent(currentPath)}`)
                 .then(response => response.json())
@@ -338,9 +345,9 @@
                         fileListElement.appendChild(row);
                         if (file.is_directory) {
                             row.addEventListener('click', () => {
-                                const newPath = `${currentPath}\\${file.name}`;
-                                console.log('Directory clicked, new path:', newPath); 
-                                loadFileList('', newPath);
+                                const dirPath = `${currentPath}/${file.name}`;
+                                console.log('Directory clicked, new path:', dirPath); 
+                                loadFileList('', dirPath);
                             });
                         }
 
