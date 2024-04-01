@@ -16,21 +16,29 @@ class FileHandler:
     #get list of the files
     def get_file_list(self, relative_path=""):
         path = os.path.join(self.device_files_folder, relative_path.strip("/"))
-        print("path: ",path)
+        
+        # If the path is a file, get the directory
+        if os.path.isfile(path):
+            path = os.path.dirname(path)
+
+        print("Directory path: ", path)
+
         file_list = []
-        for item in os.listdir(path):
-            full_path = os.path.join(path, item)
-            stat = os.stat(full_path)
-            is_directory = os.path.isdir(full_path)
-            dataDict = {
-                'inode': stat.st_ino,
-                'name': secure_filename(item),
-                'size': size(stat.st_size) if not is_directory else "—",
-                'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
-                'is_directory': is_directory,
-                'path': path  
-            }
-            file_list.append(dataDict)
+        # Check if the path is a directory or not
+        if os.path.isdir(path):
+            for item in os.listdir(path):
+                full_path = os.path.join(path, item)
+                stat = os.stat(full_path)
+                is_directory = os.path.isdir(full_path)
+                dataDict = {
+                    'inode': stat.st_ino,
+                    'name': secure_filename(item),
+                    'size': size(stat.st_size) if not is_directory else "—",
+                    'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
+                    'is_directory': is_directory,
+                    'path': os.path.dirname(full_path) if not is_directory else full_path
+                }
+                file_list.append(dataDict)
         return file_list
 
 

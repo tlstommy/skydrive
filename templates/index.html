@@ -129,7 +129,10 @@
             fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}&path=${encodeURIComponent(path)}`)
                 .then(response => response.json())
                 .then(fileDetails => {
-                    currentPath = fileDetails.path; 
+                    if(fileDetails.is_dir){
+                        currentPath = fileDetails.path; // Only update if it's a directory
+                        loadFileList('',fileDetails.path)
+                    }
                     updateFileDetailsPreview(fileDetails);
                 })
                 .catch(error => {
@@ -323,7 +326,8 @@
             console.log(newPath)
             if (newPath !== '') currentPath = newPath;
             console.log("current path: " +currentPath)
-            fetch(`/files?path=${encodeURIComponent(currentPath)}`)
+            const pathToLoad = newPath !== '' ? newPath : currentPath;
+            fetch(`/files?path=${encodeURIComponent(pathToLoad)}`)
                 .then(response => response.json())
                 .then(files => {
                     const fileListElement = document.getElementById('fileList');
