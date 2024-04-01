@@ -15,6 +15,7 @@ class FileHandler:
 
     #get list of the files
     def get_file_list(self, relative_path=""):
+
         path = os.path.join(self.device_files_folder, relative_path.strip("/"))
         file_list = []
         for item in os.listdir(path):
@@ -35,11 +36,13 @@ class FileHandler:
 
 
     #get info of a file
-    def get_file_info(self, inode, filename, filename_full):
+    def get_file_info(self, inode, filename, filename_full,path):
         file_details_dict = {}
         
-        print(inode,filename,filename_full)
-        stat = os.stat(os.path.join(self.device_files_folder,filename_full))
+        print(inode,filename,filename_full,path)
+        full_path = os.path.abspath(os.path.join(self.device_files_folder, path.strip("/")))
+
+        stat = os.stat(full_path)
         filename = filename_full
         print(stat)
 
@@ -55,12 +58,12 @@ class FileHandler:
 
 
         #check if its a dir
-        is_directory = os.path.isdir(os.path.join(self.device_files_folder,filename_full))
+        is_directory = os.path.isdir(full_path)
         print("is dir?: " , is_directory)
 
         
 
-        filename,filetype = os.path.splitext(filename)
+        filename,filetype = os.path.splitext(os.path.basename(full_path))
 
         file_details_dict = {
             'inode': stat.st_ino,
@@ -70,7 +73,7 @@ class FileHandler:
             'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%d/%m/%Y, %H:%M:%S'),
             'fileID':str(filename+filetype),
             'is_dir':is_directory,
-            'path':str(os.path.join(self.device_files_folder,filename_full))
+            'path': os.path.relpath(full_path, self.device_files_folder)
         }
 
         print(file_details_dict)
