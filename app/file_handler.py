@@ -48,9 +48,15 @@ class FileHandler:
         file_details_dict = {}
         
         print(inode,filename,filename_full,path)
-        stat = os.stat(os.path.join(self.device_files_folder,filename_full))
+       
+        if os.path.exists(os.path.join(self.device_files_folder,filename_full)):
+            stat = os.stat(os.path.join(self.device_files_folder,filename_full))
+        else:
+            print(os.path.join(path,filename_full))
+            stat = os.stat(os.path.join(path,filename_full))
+
         filename = filename_full
-        print(stat)
+        print("\nStat: ",stat)
 
         # check if the files match
         if(stat.st_ino != inode):
@@ -171,3 +177,4 @@ class FileHandler:
         print(filename.split('.')[-1])
         print(f'preview file ran, {filename}')
         return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)
+    
