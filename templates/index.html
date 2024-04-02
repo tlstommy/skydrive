@@ -143,6 +143,8 @@
 
         function updateFileDetailsPreview(fileDetails) {
             console.log(fileDetails);
+
+            // fix the bug here!!!
             currentPath = fileDetails.path;
             if(fileDetails.is_dir){
                 
@@ -325,7 +327,7 @@
         function loadFileList(searchTerm = '', newPath = '') {
             console.log(newPath)
             if (newPath !== '') currentPath = newPath;
-            console.log("current path: " +currentPath)
+            console.log("current path: " + currentPath)
             const pathToLoad = newPath !== '' ? newPath : currentPath;
             fetch(`/files?path=${encodeURIComponent(pathToLoad)}`)
                 .then(response => response.json())
@@ -404,17 +406,31 @@
         };
   
         function goBackUpDir() {
+            console.log('go back. Current path:', currentPath);
             const pathArray = currentPath.split('/').filter(Boolean);
-            if(pathArray.length === 0) {
-                console.log('Already at root. Cannot go back.'); // Debugging line
-                return; // Already at the root directory
-            }
-            pathArray.pop(); // Remove the last segment of the current path
-            const newPath = pathArray.join('/');
-            console.log('Going back. New path:', newPath); // Debugging line
-            loadFileList('', newPath);
-        }
 
+            //if at the root
+            if (pathArray.length === 0) {
+                console.warn('Already at the root directory. Cannot go back further.');
+                alert('You are at the root directory. Cannot go back further.');
+                return;
+            }
+
+            //Navigate back up
+            pathArray.pop();
+            const newPath = '/' + pathArray.join('/');
+            console.log('new path after going back:', newPath);
+
+            //loading the new path
+            try {
+                loadFileList('', newPath);
+                currentPath = newPath; // Update current path only after successful load
+
+            } catch (error) {
+                console.error('Error loading the new path:', newPath, error);
+                alert('Failed to load the previous directory. Please try again.');
+            }
+        }
         //file back button
         document.getElementById('backButton').addEventListener('click', goBackUpDir);
 
