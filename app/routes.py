@@ -2,6 +2,7 @@ from app import app
 from app.file_handler import FileHandler
 from flask import render_template, jsonify, request, send_from_directory,make_response
 from werkzeug.utils import secure_filename
+import urllib.parse
 
 #routes for requests and such
 
@@ -28,9 +29,9 @@ def get_file_info():
     print("reqg args below")
     print(request.args)
 
-    print(f"debug path: {path} \\ {filename_full}")
+    print(f"debug path: {urllib.parse.unquote(path)} \\ {filename_full}")
     try:
-        file_info = file_handler.get_file_info(inode, filename,filename_full,path)
+        file_info = file_handler.get_file_info(inode, filename,filename_full,urllib.parse.unquote(path))
         
         return jsonify(file_info)
     except Exception as e:
@@ -102,9 +103,12 @@ def upload_to_device():
     return file_handler.upload_files(files)
 
 #preview file call,figure out what to do for pdf/img/office docs
-@app.route('/preview-file/<filename>', methods=['GET'])
-def preview_file(filename):
-    resp = make_response(file_handler.preview_file(filename))
+@app.route('/preview-file', methods=['GET'])
+def preview_file():
+    filename = request.args['name']
+    path = request.args['path']
+    print(f"pf: {request.args}")
+    resp = make_response(file_handler.preview_file(filename,path))
     resp.headers['Content-Disposition'] = 'inline'
     return resp
 

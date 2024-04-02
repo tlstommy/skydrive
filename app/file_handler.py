@@ -51,9 +51,11 @@ class FileHandler:
        
         if os.path.exists(os.path.join(self.device_files_folder,filename_full)):
             stat = os.stat(os.path.join(self.device_files_folder,filename_full))
+            path = os.path.join(self.device_files_folder,filename_full)
         else:
             print(os.path.join(path,filename_full))
             stat = os.stat(os.path.join(path,filename_full))
+            path = os.path.join(path,filename_full)
 
         filename = filename_full
         print("\nStat: ",stat)
@@ -157,10 +159,17 @@ class FileHandler:
         return
 
     #preview files
-    def preview_file(self,filename):
-
+    def preview_file(self,filename,path):
+        print("filename: ",filename)
+        print("filepath: ",path)
+        if(path == '/'):
+            path = ''
+        
+        filename = os.path.normpath(os.path.relpath(os.path.join(path,filename)))
+        print("fp: ",filename.replace("device-files\\",""))
+        filename = filename.replace("device-files\\","")
         valid_application_types = ['pdf','pdf']
-        filename = secure_filename(filename)
+        filename =(filename)
         
         filetype,encoding = mimetypes.guess_type(filename)
         print(filetype)

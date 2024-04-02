@@ -134,7 +134,8 @@
                         currentPath = fileDetails.path; // Only update if it's a directory
                         loadFileList('',fileDetails.path)
                     }
-                    updateFileDetailsPreview(fileDetails);
+                    
+                    updateFileDetailsPreview(fileDetails,path);
                 })
                 .catch(error => {
                     console.error('Error fetching file details:', error);
@@ -142,13 +143,11 @@
         }
 
 
-        function updateFileDetailsPreview(fileDetails) {
+        function updateFileDetailsPreview(fileDetails,path) {
             console.log(fileDetails);
 
             // fix the bug here!!!
-            if(fileDetails.path){
-                currentPath=fileDetails.path
-            }
+            
             
             if(fileDetails.is_dir){
                 
@@ -163,7 +162,7 @@
             `;
             
     
-            previewFile(fileDetails.fileID,fileDetails);
+            previewFile(fileDetails.fileID,fileDetails,path);
             const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
             optionsButtons.style.display = 'block';
 
@@ -369,14 +368,17 @@
         }
 
         //file preview func
-        function previewFile(fileId,fileDetails) {
+        function previewFile(fileId,fileDetails,path) {
 
             const fileType = fileDetails.filetype.toLowerCase();
             const filePreviewIframe = document.getElementById('file-preview-iframe');
-
+            console.log(fileDetails)
+            console.log(fileId)
+            console.log(path)
             //the URL to the backend route that serves the file preview
-            const filePreviewUrl = `/preview-file/${fileId}`;
+            const filePreviewUrl = `/preview-file?name=${fileId}&path=${decodeURIComponent(path)}`;
             // Set the iframe source to the file preview URL
+
             filePreviewIframe.src = filePreviewUrl;
             
             
