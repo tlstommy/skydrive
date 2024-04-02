@@ -184,6 +184,14 @@ class FileHandler:
                 return f"Unable to preview file, {filename}."
         
         print(filename.split('.')[-1])
+        print(self.device_files_folder)
+        print(filename)
+        print(f'{self.device_files_folder}\\{filename}')
         print(f'preview file ran, {filename}')
-        return send_from_directory(directory=self.device_files_folder, path=filename,as_attachment=False)
+
+        split_dir = os.path.join(self.device_files_folder,filename).rsplit(os.path.sep,1)
+        print(split_dir)
+
+
+        return send_from_directory(directory=split_dir[0], path=split_dir[1],as_attachment=False)
     
