@@ -27,10 +27,14 @@ def get_file_info():
     path = request.args['path']
     print("reqg args below")
     print(request.args)
+
+    print(f"debug path: {path} \\ {filename_full}")
     try:
         file_info = file_handler.get_file_info(inode, filename,filename_full,path)
+        
         return jsonify(file_info)
     except Exception as e:
+        print(f"Error: {e}")
         return jsonify({"error": str(e)}), 400
 
 #call to download file
