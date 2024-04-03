@@ -483,12 +483,34 @@
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/upload', true);
 
+                //time of upload start
+                var uploadStartTime = new Date().getTime();
+
 
                 xhr.upload.onprogress = function(e) {
                     if (e.lengthComputable) {
-                        var percentage = (e.loaded / e.total) * 100;
+
+                        var currentTime = new Date().getTime(); 
+                        var timeDelta = (currentTime - uploadStartTime) / 1000; //delta t in seconds
+                        var speed = e.loaded / timeDelta; // Calculate the upload speed
+                        
+                        var percentage = (e.loaded / e.total) * 100;//percent downloaded
+
+
                         document.getElementById('upload-progress-bar').style.width = percentage + '%';
-                        document.getElementById('upload-progress-bar').innerText = ' ' + Math.round(percentage) + '%';
+                        
+                        
+                        //Format upload speed with the proper units
+                        var speedText;
+                        if(speed > 1024 * 1024) {
+                            speedText = (speed / (1024 * 1024)).toFixed(2) + ' MB/s';
+                        }else if (speed > 1024) {
+                            speedText = (speed / 1024).toFixed(2) + ' KB/s';
+                        }else{
+                            speedText = speed.toFixed(2) + ' B/s';
+                        }
+
+                        document.getElementById('upload-progress-bar').innerText = ' ' + Math.round(percentage) + '% (' + speedText + ')';
                     }
                 };
 
