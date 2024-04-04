@@ -27,13 +27,20 @@
 
                 <div class="mb-4">
                     <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
-                    <button id="backButton" class="border-2 p-2 mt-2">Back</button>
+                    
                 </div>
                 <div class="flex flex-col w-full">
 
 
                     <p class="font-semibold mb-4">Files On Device</p>
-
+                    <button id="backButton" class=" p-2 mb-2" style="width: fit-content;">
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            
+                        </svg>
+                        
+                    </button>
                     <!-- Scrollable table body -->
                     <div class="scrollable-table-body">
                         <table class="w-full text-left table-fixed">
@@ -41,6 +48,7 @@
                                 <tr id="tableheader-head">
                                     <th class="px-4 py-2 w-2"><input type="checkbox"
                                             class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
+                                    
                                     <th class="py-2 w-1/2">Name</th>
                                     <th class="py-2 w-1/6">File Size</th>
                                     <th class="py-2 w-1/4">Last Modified</th>
@@ -60,7 +68,8 @@
                             Upload file(s)
                         </label>
                         <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
-                            <div id="upload-progress-bar" style="height: 24px; background-color: #55be58; width: 0%;">&nbsp; Uploading - 0%</div>
+                            <div id="upload-progress-bar" style="height: 24px; background-color: #55be58; width: 0%;"></div>
+                            <div id="upload-progress-bar-text" style="width: 100%;white-space: pre;">&nbsp; Uploading - 0%</div>
                         </div>    
                         <input
                             class="block w-full p-2 text-sm border border-gray-300 rounded-lg cursor-pointer  focus:outline-none"
@@ -153,6 +162,8 @@
                 
                 loadFileList('',fileDetails.path)
             }
+
+            
             const fileDetailsInfo = document.querySelector('.file-details-section .file-info');
             fileDetailsInfo.innerHTML = `
             <p>Filename: ${fileDetails.filename}</p>
@@ -332,6 +343,16 @@
             if (newPath !== '') currentPath = newPath;
             console.log("current path: " + currentPath)
             const pathToLoad = newPath !== '' ? newPath : currentPath;
+
+            //only show the back button when nessecary
+            const pathDepth = currentPath.split('/').filter(Boolean).length;
+            if(pathDepth > 0){
+                document.getElementById('backButton').style.display = 'block';
+            }else{
+                document.getElementById('backButton').style.display = 'none';
+            }
+
+
             fetch(`/files?path=${encodeURIComponent(pathToLoad)}`)
                 .then(response => response.json())
                 .then(files => {
@@ -339,17 +360,43 @@
                     fileListElement.innerHTML = '';
                     
                     const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
-                    filteredFiles.sort()
+                    
+                    //sort to bring directories to the top and put reg files at the bottom
+                    filteredFiles.sort((a, b) => {
+                    if (a.is_directory && !b.is_directory) {
+                        return -1; //a  is a dir so its before b
+                    } else if (!a.is_directory && b.is_directory) {
+                        return 1; // b  isnt a dir so its after b
+                    } else {
+                        return 0; // keep original order
+                    }
+                    });
+
+
+                    console.log(filteredFiles)
                     filteredFiles.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
-
-                        row.innerHTML = `
-                            <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
-                            <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
-                            <td class="file-size-col py-2 w-1/6">${file.size}</td>
-                            <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
-                        `;
+                        
+                        if(file.is_directory){
+                            row.innerHTML = `
+                                <th class="px-4 py-2 w-2 filelist-checkbox folder">
+                                    <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill=#a1a1ff viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd" d="M5 4a2 2 0 0 0-2 2v1h10.968l-1.9-2.28A2 2 0 0 0 10.532 4H5ZM3 19V9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm11.707-7.707a1 1 0 0 0-1.414 1.414l.293.293H8a1 1 0 1 0 0 2h5.586l-.293.293a1 1 0 0 0 1.414 1.414l2-2a1 1 0 0 0 0-1.414l-2-2Z" clip-rule="evenodd"/>
+                                        </svg>
+                                </th>
+                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
+                                <td class="file-size-col py-2 w-1/6">${file.size}</td>
+                                <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
+                            `;
+                        }else{
+                            row.innerHTML = `
+                                <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
+                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
+                                <td class="file-size-col py-2 w-1/6">${file.size}</td>
+                                <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
+                            `;
+                        }
 
                         fileListElement.appendChild(row);
                         if (file.is_directory) {
@@ -488,6 +535,7 @@
 
 
                 xhr.upload.onprogress = function(e) {
+                    
                     if (e.lengthComputable) {
 
                         var currentTime = new Date().getTime(); 
@@ -510,7 +558,7 @@
                             speedText = speed.toFixed(2) + ' B/s';
                         }
 
-                        document.getElementById('upload-progress-bar').innerText = ' ' + Math.round(percentage) + '% (' + speedText + ')';
+                        document.getElementById('upload-progress-bar-text').innerText = ' Progress: ' + Math.round(percentage).toString().padStart(4) + '% (' + speedText + ')';
                     }
                 };
 
