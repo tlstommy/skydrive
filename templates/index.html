@@ -33,7 +33,7 @@
 
 
                     <p class="font-semibold mb-4">Files On Device</p>
-                    <button id="backButton" class=" p-2 mb-2" style="width: fit-content;">
+                    <button id="backButton" class=" p-2 mb-2" style="width: fit-content;display: none;">
                         
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="none">
                             <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -62,15 +62,15 @@
 
                 </div>
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
-                    <div class="py-8">
+                    <div class="py-4">
                                              
-                        <label class="block mb-2 text-sm font-medium" for="multiple_files">
+                        <label id="upload-files-label" class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
                         </label>
-                        <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
-                            <div id="upload-progress-bar" style="height: 24px; background-color: #55be58; width: 0%;"></div>
-                            <div id="upload-progress-bar-text" style="width: 100%;white-space: pre;">&nbsp; Uploading - 0%</div>
-                        </div>    
+                            <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
+                                <div id="upload-progress-bar" style="height: 24px; background-color: #328f36; width: 0%;white-space: pre;"></div>
+                                
+                            </div>    
                         <input
                             class="block w-full p-2 text-sm border border-gray-300 rounded-lg cursor-pointer  focus:outline-none"
                             id="multiple_files" type="file" name="file" multiple>
@@ -526,7 +526,9 @@
                 var formData = new FormData(document.getElementById('file-upload-form'));
                 
                 //progress bar
+                document.getElementById('upload-files-label').style.display = 'none';
                 document.getElementById('upload-progress-container').style.display = 'block';
+                
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/upload', true);
 
@@ -558,7 +560,7 @@
                             speedText = speed.toFixed(2) + ' B/s';
                         }
 
-                        document.getElementById('upload-progress-bar-text').innerText = ' Progress: ' + Math.round(percentage).toString().padStart(4) + '% (' + speedText + ')';
+                        document.getElementById('upload-progress-bar').innerText = ' Upload progress: ' + Math.round(percentage).toString().padStart(4) + '% (' + speedText + ')';
                     }
                 };
 
@@ -566,7 +568,8 @@
                     if (xhr.status === 200) {
                         // Success
                         console.log(JSON.parse(xhr.responseText));
-                        document.getElementById('upload-progress-container').style.display = 'none'; // Hide progress bar
+                        document.getElementById('upload-progress-container').style.display = 'none'; // Hide progress bar and show label
+                        document.getElementById('upload-files-label').style.display = 'block';
                         loadFileList(); // Reload the file list
                     } else {
                         // Error
