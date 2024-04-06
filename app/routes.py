@@ -29,7 +29,7 @@ def get_file_info():
     print("reqg args below")
     print(request.args)
 
-    print(f"debug path: {urllib.parse.unquote(path)} \\ {filename_full}")
+    print(f"debug path: {urllib.parse.unquote(path)}/{filename_full}")
     try:
         file_info = file_handler.get_file_info(inode, filename,filename_full,urllib.parse.unquote(path))
         

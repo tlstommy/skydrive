@@ -168,8 +168,8 @@ class FileHandler:
             path = ''
         
         filename = os.path.normpath(os.path.relpath(os.path.join(path,filename)))
-        print("fp: ",filename.replace("device-files\\",""))
-        filename = filename.replace("device-files\\","")
+        print("fp: ",filename.replace("device-files/",""))
+        filename = filename.replace("device-files/","")
         valid_application_types = ['pdf','pdf']
         filename =(filename)
         
@@ -188,7 +188,7 @@ class FileHandler:
         print(filename.split('.')[-1])
         print(self.device_files_folder)
         print(filename)
-        print(f'{self.device_files_folder}\\{filename}')
+        print(f'{self.device_files_folder}/{filename}')
         print(f'preview file ran, {filename}')
 
         split_dir = os.path.join(self.device_files_folder,filename).rsplit(os.path.sep,1)
