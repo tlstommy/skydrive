@@ -13,14 +13,8 @@ green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 
 enable_interfaces(){
-  #enable spi
-  sudo sed -i 's/^dtparam=spi=.*/dtparam=spi=on/' /boot/config.txt
-  sudo sed -i 's/^#dtparam=spi=.*/dtparam=spi=on/' /boot/config.txt
-  print_success "SPI Interface has been enabled."
-  #enable i2c
-  sudo sed -i 's/^dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/config.txt
-  sudo sed -i 's/^#dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/config.txt
-  print_success "I2C Interface has been enabled.\n"
+  #enable pcie connector
+  echo "run enable interfaces"
 }
 
 
@@ -92,7 +86,7 @@ ipAddress=$(hostname -I | cut -d ' ' -f 1)
 
 # do a sudo check!
 if [ "$EUID" -ne 0 ]; then
-  echo -e "\n[ERROR]: $(print_error "The PiInk installation script requires root privileges. Please run it with sudo.\n")"
+  echo -e "\n[ERROR]: $(print_error "The installation script requires root privileges. Please run it with sudo.\n")"
   exit 1
 fi
 
@@ -101,3 +95,8 @@ if [ "$currentFolder" == "scripts" ]; then
   currentDir=$(pwd)
   currentWorkingDir=$(pwd)
 fi
+
+echo -e "$currentDir"
+echo -e "$currentWorkingDir"
+echo -e "$currentFolder"
+echo -e "$ipAddress"
