@@ -3,6 +3,7 @@ from app.file_handler import FileHandler
 from flask import render_template, jsonify, request, send_from_directory,make_response
 from werkzeug.utils import secure_filename
 import urllib.parse
+import os,subprocess
 
 #routes for requests and such
 
@@ -116,7 +117,34 @@ def preview_file():
 #home
 @app.route("/settings", methods=['GET','POST'])
 def settings():
-    print("req ",request.form)    
+    print("req ",request.form)
+
+
+
+
+    #power settings pressed check
+
+    if(request.form.get('settings-power-restart') == 'restart'):
+        print('restarting')
+        os.system("sudo reboot")
+        
+
+    if(request.form.get('settings-power-shutdown') == 'shutdown'):
+        print('shutting down')
+        os.system("sudo shutdown")
+        
+    
+    if(request.form.get('settings-general') == 'get-info'):
+        print("Get info ran!")
+        
+        cpu_temp = subprocess.check_output('vcgencmd measure_temp', shell=True, text=True)
+        
+
+        print(cpu_temp)
+
+
+
+
     return render_template("settings.html")
 
 #home
