@@ -1,5 +1,5 @@
 import os, datetime
-from hurry.filesize import size
+#from hurry.filesize import size
 from werkzeug.utils import secure_filename
 from flask import send_from_directory,send_file,jsonify
 import zipfile
@@ -14,6 +14,14 @@ class FileHandler:
         self.device_files_folder = files_folder
         mimetypes.init()
 
+
+    #fucntion to clac size instead of hurry.filesize cred so
+    def size(self,size):
+        for unit in ("", "K", "M", "G", "T"):
+            if abs(size) < 1024.0:
+                return f"{size:3.1f}{unit}B"
+            size /= 1024.0
+        return "null"
 
     #get list of the files
     def get_file_list(self, relative_path=""):
@@ -35,7 +43,7 @@ class FileHandler:
                 dataDict = {
                     'inode': stat.st_ino,
                     'name': secure_filename(item),
-                    'size': size(stat.st_size) if not is_directory else "—",
+                    'size': self.size(stat.st_size) if not is_directory else "—",
                     'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S'),
                     'is_directory': is_directory,
                     'path': os.path.dirname(full_path) if not is_directory else full_path
@@ -85,7 +93,7 @@ class FileHandler:
             'inode': stat.st_ino,
             'filename': filename,
             'filetype': filetype,
-            'size': size(stat.st_size),
+            'size': self.size(stat.st_size),
             'last_modified': datetime.datetime.fromtimestamp(stat.st_mtime).strftime('%d/%m/%Y, %H:%M:%S'),
             'fileID':str(filename+filetype),
             'is_dir':is_directory,
