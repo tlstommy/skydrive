@@ -12,9 +12,35 @@ red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 
-enable_interfaces(){
+#make a venv if one doesnt exist
+make_venv(){
+  
+  echo -e "cwd: - $currentDir"
+  if [ -d "$currentDir/.venv" ]; then
+    echo "venv exists."
+    source .venv/bin/activate
+    
+  else
+    echo "venv doesnt exist."
+    python3 -m venv .venv
+    source .venv/bin/activate
+
+  fi
+
+  
+  
+}
+
+enable_pcie_interface(){
   #enable pcie connector
   echo "run enable interfaces"
+
+
+  #add line to boot config file if its not there
+  if ! grep -Fxq "# Enable the PCIe External connector." /boot/firmware/config.txt; then
+    echo -e "\n# Enable the PCIe External connector.\ndtparam=pciex1\n" | sudo tee -a /boot/firmware/config.txt > /dev/null
+  fi
+
 }
 
 
@@ -100,3 +126,10 @@ echo -e "$currentDir"
 echo -e "$currentWorkingDir"
 echo -e "$currentFolder"
 echo -e "$ipAddress"
+
+
+make_venv
+
+enable_pcie_interface
+
+#flask run
