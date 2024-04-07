@@ -33,9 +33,48 @@ make_venv(){
 
 #look to see if a drive exists
 check_and_mount_nvme_drive() {
-    if lsblk | grep -q "nvme"; then
+
+    read nvme_drive drive_size drive_type mount_point < <(lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS | grep "nvme" | awk 'NR==1 {print $1, $2, $3, $4}')
+
+    if [ -n "$nvme_drive" ]; then
         echo "NVMe drive detected!"
-        lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS | grep "nvme" | awk '{print "Name: " $1 ", Size: " $2 ", Type: " $3", Mountpoint: " $4}'
+        echo "Name: $nvme_drive, Size: $drive_size, Type: $drive_type, Mountpoint: $mount_point"
+
+        print_warn "\nThe $drive_size drive, $nvme_drive, will be partitioned and all existing data will be destroyed."
+
+        read -p "Would you like to proceed? [Y/n] " userInput
+        userInput="${userInput^^}"
+
+        if [[ $userInput == "Y" ]]; then
+            print_success "You entered 'Y'. Proceeding with the installation.\n"
+            sleep 2
+        else
+            print_error "Aborting!"
+            sleep 1
+            exit
+        fi
+
+
+        #partion the drive
+        #sudo fdisk /dev/$nvme_drive   
+
+        echo "Creating single partition..."
+
+        echo -e "o\nn\np\n1\n\n\nw" | sudo fdisk /dev/$nvme_drive
+        
+        sleep 5
+        print_success "\nPartition Created!"
+        
+
+        echo -e "\nFormatting partition to ext4..."
+        sudo mkfs.ext4 /dev/"${nvme_drive}p1"
+
+        print_success "${nvme_drive} formatted to ext4 on partiton ${nvme_drive}p1."
+        
+        sleep 3
+        echo "mounting drive to /mnt/nvme..."
+        
+
 
     else
         echo "No NVMe drive detected!"
@@ -59,7 +98,7 @@ enable_pcie_interface(){
     exit 
   fi
 
-  check_nvme_drive
+  check_and_mount_nvme_drive
 
 }
 
