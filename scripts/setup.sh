@@ -31,15 +31,35 @@ make_venv(){
   
 }
 
+#look to see if a drive exists
+check_and_mount_nvme_drive() {
+    if lsblk | grep -q "nvme"; then
+        echo "NVMe drive detected!"
+        lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS | grep "nvme" | awk '{print "Name: " $1 ", Size: " $2 ", Type: " $3", Mountpoint: " $4}'
+
+    else
+        echo "No NVMe drive detected!"
+        echo "Please reboot your pi and re-run this script to finish installation and allow an nvme drive to be detected! If you havent ran this setup script before this is normal."
+        exit
+    fi
+}
+
+
 enable_pcie_interface(){
   #enable pcie connector
-  echo "run enable interfaces"
+  echo "run enable interfaces - dtparam check"
 
 
   #add line to boot config file if its not there
   if ! grep -Fxq "# Enable the PCIe External connector." /boot/firmware/config.txt; then
     echo -e "\n# Enable the PCIe External connector.\ndtparam=pciex1\n" | sudo tee -a /boot/firmware/config.txt > /dev/null
+
+
+    echo -e "Please reboot your pi and re-run this script to finish installation!"
+    exit 
   fi
+
+  check_nvme_drive
 
 }
 
