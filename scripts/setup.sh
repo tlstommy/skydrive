@@ -32,7 +32,7 @@ make_venv(){
 }
 
 #look to see if a drive exists
-check_and_mount_nvme_drive() {
+check_and_mount_nvme_drive(){
 
     read nvme_drive drive_size drive_type mount_point < <(lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS | grep "nvme" | awk 'NR==1 {print $1, $2, $3, $4}')
 
@@ -73,10 +73,29 @@ check_and_mount_nvme_drive() {
         
         sleep 3
         echo "mounting drive to /mnt/nvme..."
+        sudo mkdir -p /mnt/nvme
+        echo "${nvme_drive}p1"
+        sudo mount "/dev/${nvme_drive}p1" /mnt/nvme
+
+
+        echo "Running FSTAB to mount at boot..."
+        UUID=$(sudo blkid -s UUID -o value "/dev/${nvme_drive}p1")
+
+        # Check if the partitions UUID is already in fstab
         
+        if ! grep -q "UUID=$UUID" /etc/fstab; then
+          # Add to fstab for auto-mounting on boot
+          echo "UUID=$UUID /mnt/nvme ext4 defaults,noatime 0 2" | sudo tee -a /etc/fstab
+          echo "Added NVMe drive to /etc/fstab for automatic mounting."
+        else
+            echo "NVMe drive mount line  already in /etc/fstab."
+        fi
+            
 
+        mkdir /mnt/nvme/data    
+        print_success "\nDrive /dev/${nvme_drive}p1 mounted and formatted!"
 
-    else
+      else
         echo "No NVMe drive detected!"
         echo "Please reboot your pi and re-run this script to finish installation and allow an nvme drive to be detected! If you havent ran this setup script before this is normal."
         exit
@@ -98,12 +117,14 @@ enable_pcie_interface(){
     exit 
   fi
 
-  check_and_mount_nvme_drive
+}
+
+node_install(){
 
 }
 
 
-show_loader() {
+show_loader(){
   local pid=$!
   local delay=0.1
   local spinstr='|/-\'
@@ -191,4 +212,10 @@ make_venv
 
 enable_pcie_interface
 
-#flask run
+check_and_mount_nvme_drive
+
+print_header  "Installing python packages."
+#pip3 install -r requirements.txt #> /dev/null &
+show_loader "   Installing packages...    "
+
+sudo flask run
