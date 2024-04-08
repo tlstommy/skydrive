@@ -27,8 +27,6 @@ make_venv(){
 
   fi
 
-  
-  
 }
 
 #look to see if a drive exists
@@ -120,7 +118,26 @@ enable_pcie_interface(){
 }
 
 node_install(){
+  print_header "Installing NodeJS, NPM & Tailwind."
 
+  sudo apt-get install -y nodejs
+  sudo apt-get install -y npm
+
+  npm install -D tailwindcss
+
+  npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
+  npx tailwindcss -i ./static/src/theme.css -o ./static/dist/css/theme.css
+
+}
+
+
+set_hostname(){
+  #set the hostname
+  print_header "Setting hostname"
+  sudo bash -c 'echo "skydrive" > "/etc/hostname"'
+  sudo sed -i 's/127.0.0.1\s*localhost/127.0.0.1 skydrive/' /etc/hosts
+  print_success "Hostname set to skydrive!"
+  echo -e "(This can be changed using raspi-config.) \n"
 }
 
 
@@ -207,15 +224,26 @@ echo -e "$currentWorkingDir"
 echo -e "$currentFolder"
 echo -e "$ipAddress"
 
+# Create the log file
+touch "$currentWorkingDir/skydrive.log"
+
+exit
 
 make_venv
+
+set_hostname
 
 enable_pcie_interface
 
 check_and_mount_nvme_drive
 
-print_header  "Installing python packages."
+
+
+print_header "Installing python packages."
 #pip3 install -r requirements.txt #> /dev/null &
 show_loader "   Installing packages...    "
+
+node_install
+
 
 sudo flask run
