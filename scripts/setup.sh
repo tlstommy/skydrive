@@ -90,7 +90,8 @@ check_and_mount_nvme_drive(){
         fi
             
 
-        mkdir /mnt/nvme/data    
+        mkdir /mnt/nvme/data 
+        sudo chmod -R 777 /mnt/nvme   
         print_success "\nDrive /dev/${nvme_drive}p1 mounted and formatted!"
 
       else
@@ -207,7 +208,16 @@ password_check(){
     fi
 done
 
+}
 
+update_rc_local(){
+  print_header "Updating rc.local"
+  if grep -Fxq "exit 0" /etc/rc.local; then
+    sudo sed -i "/exit 0/i cd $currentWorkingDir && sudo bash $currentWorkingDir/scripts/start.sh > $currentWorkingDir/skydrive.log 2>&1 &" /etc/rc.local
+    print_success "Added startup line to rc.local!"
+  else
+    print_error "ERROR: Unable to add to rc.local"
+  fi
 }
 
 show_loader(){
@@ -298,13 +308,13 @@ touch "$currentWorkingDir/skydrive.log"
 
 password_check
 
-exit
+#exit
 
 make_venv
 
 set_hostname
 
-#setup_bonjour
+setup_bonjour
 
 enable_pcie_interface
 
@@ -313,10 +323,10 @@ check_and_mount_nvme_drive
 
 
 print_header "Installing python packages."
-#pip3 install -r requirements.txt #> /dev/null &
+sudo pip3 install -r requirements.txt #> /dev/null &
 show_loader "   Installing packages...    "
 
 node_install
 
+update_rc_local
 
-sudo flask run
