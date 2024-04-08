@@ -140,6 +140,75 @@ set_hostname(){
   echo -e "(This can be changed using raspi-config.) \n"
 }
 
+setup_bonjour(){
+  print_header "Setting up Bonjour"
+
+  sudo apt-get install -y avahi-daemon > /dev/null &
+  show_loader "   [1/2] Installing avahi-daemon."
+
+  sudo apt-get install -y netatalk > /dev/null &
+  show_loader "   [2/2] Installing netatalk.    "
+
+  print_success "Bonjour set up!\n"
+}
+
+password_set(){
+  echo $currentDir
+  local password_file="$currentDir/config/pass"
+  local password
+  local password_confirm
+
+  # Prompt for the password
+  echo -n "Enter new password: "
+  read -s password
+  echo
+
+  # Prompt for the password again for confirmation
+  echo -n "Confirm new password: "
+  read -s password_confirm
+  echo
+
+  echo $password
+  echo $password_confirm
+
+  # Check if passwords match
+  if [ "$password" != "$password_confirm" ]; then
+      echo "Passwords do not match. Please try again."
+      return 1
+  fi
+
+  # Save the password to the specified file
+  echo "$password" > "$password_file"
+
+  echo "Password has been set!"
+}
+
+password_check(){
+  while true; do
+    clear
+    print_bold "Would you like to set a password that will be required when connecting to SkyDrive?\n"
+    print_warn "It is recommended to set a password for use with sensitive files."
+   
+    read -p "Would you like to set a password? [Y/n] " userInput
+    userInput="${userInput^^}"
+
+    if [[ $userInput == "Y" ]]; then
+        print_success "You entered 'Y'.\n"
+        sleep 2
+        password_set
+        break
+    elif [[ $userInput == "N" ]]; then
+        print_warn "You entered 'N'. No password will be set.\n"
+        sleep 2
+        break
+    else
+        print_error "Invalid input! Please try again."
+        sleep 1
+    fi
+done
+
+
+}
 
 show_loader(){
   local pid=$!
@@ -227,11 +296,15 @@ echo -e "$ipAddress"
 # Create the log file
 touch "$currentWorkingDir/skydrive.log"
 
+password_check
+
 exit
 
 make_venv
 
 set_hostname
+
+#setup_bonjour
 
 enable_pcie_interface
 
