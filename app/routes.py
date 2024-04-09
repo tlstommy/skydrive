@@ -3,11 +3,39 @@ from app.file_handler import FileHandler
 from flask import render_template, jsonify, request, send_from_directory,make_response
 from werkzeug.utils import secure_filename
 import urllib.parse
-import os,subprocess
+import os,subprocess,json
 
 #routes for requests and such
 
 file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
+
+PATH = os.path.dirname(os.path.dirname(__file__))
+print("PATH:  ",PATH)
+def load_settings_pcie_mode():
+    
+    with open(os.path.join(PATH,"config/settings.json")) as jf:
+        settings_data = json.load(jf)
+
+        print(settings_data.get("pcie_gen3_mode"))
+        return settings_data.get("pcie_gen3_mode")
+        
+
+
+def saveSettings(use_gen3):
+    jsonStr = {
+        "pcie_gen3_mode": use_gen3,
+    }
+    with open(os.path.join(PATH,"config/settings.json"), "w") as f:
+        json.dump(jsonStr, f)
+
+
+
+
+
+
+
+
+
 
 #call to get file list
 @app.route('/files', methods=['GET'])
@@ -146,6 +174,20 @@ def settings():
 
 
     return render_template("settings.html")
+
+@app.route("/get_pcie_mode", methods=['GET'])
+def get_pcie_mode():
+    # Ensure to return a boolean value
+    return jsonify({"pcie-gen3-mode": load_settings_pcie_mode()})
+
+@app.route("/set_pcie_mode", methods=['POST'])
+def set_pcie_mode():
+    useGen3 = request.form.get('mode') == 'true'  # Convert string to boolean
+    saveSettings(useGen3)
+    return jsonify({"pcie-gen3-mode": useGen3})
+
+    
+
 
 #home
 @app.route("/", methods=['GET'])
