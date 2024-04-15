@@ -153,54 +153,91 @@ setup_bonjour(){
   print_success "Bonjour set up!\n"
 }
 
-password_set(){
+create_settings_config(){
+  local type="$1"
   echo $currentDir
-  local password_file="$currentDir/config/pass"
-  local password
-  local password_confirm
+  case "$type" in
+        1)
+            #PASSWORD ENABLED
+            JSON='{"pcie_gen3_mode": false,"require_pass": true}'
+            echo $JSON > $currentDir/config/settings.json
+            ;;
+        2)
+            # PASSWORD DISABLED
+            JSON='{"pcie_gen3_mode": false,"require_pass": false}'
+            echo $JSON > $currentDir/config/settings.json
+            ;;
+        *)
+            # Default case
+            echo "Error: Unknown type '$type'"
+            ;;
+    esac 
 
-  # Prompt for the password
-  echo -n "Enter new password: "
-  read -s password
-  echo
-
-  # Prompt for the password again for confirmation
-  echo -n "Confirm new password: "
-  read -s password_confirm
-  echo
-
-  echo $password
-  echo $password_confirm
-
-  # Check if passwords match
-  if [ "$password" != "$password_confirm" ]; then
-      echo "Passwords do not match. Please try again."
-      return 1
-  fi
-
-  # Save the password to the specified file
-  echo "$password" > "$password_file"
-
-  echo "Password has been set!"
 }
 
-password_check(){
+password_set(){
   while true; do
     clear
-    print_bold "Would you like to set a password that will be required when connecting to SkyDrive?\n"
-    print_warn "It is recommended to set a password for use with sensitive files."
+    print_bold "Please specify a password for Skydrive."
+    print_warn "Note: This is diffrent than the Pi User Password.\n"
+
+    echo $currentDir
+    touch $currentDir/config/ pass
+    local password_file="$currentDir/config/pass"
+    local password
+    local password_confirm
+
+    # Prompt for the password
+    echo -n "Enter new password: "
+    read -s password
+    echo
+
+    # Prompt for the password again for confirmation
+    echo -n "Confirm new password: "
+    read -s password_confirm
+    echo
+
+    echo $password
+    echo $password_confirm
+
+    # Check if passwords match
+    if [ "$password" != "$password_confirm" ]; then
+      print_warn "Passwords do not match! Please try again."
+      sleep 2
+
+    
+ 
+    else
+      # Save the password to the specified file
+      echo "$password" > "$password_file"
+
+      echo "Password has been set!"
+      break
+    fi
+
+    
+  done   
+}
+
+password_require(){
+  while true; do
+    clear
+    print_bold "Would you like the password to be required when connecting to SkyDrive?\n"
+    print_warn "It is recommended for use with sensitive files."
    
-    read -p "Would you like to set a password? [Y/n] " userInput
+    read -p "Would you like to enable the password? [Y/n] " userInput
     userInput="${userInput^^}"
 
     if [[ $userInput == "Y" ]]; then
         print_success "You entered 'Y'.\n"
         sleep 2
-        password_set
+        create_settings_config 1
+
         break
     elif [[ $userInput == "N" ]]; then
-        print_warn "You entered 'N'. No password will be set.\n"
+        print_warn "You entered 'N'. \n"
         sleep 2
+        create_settings_config 2
         break
     else
         print_error "Invalid input! Please try again."
@@ -306,7 +343,9 @@ echo -e "$ipAddress"
 # Create the log file
 touch "$currentWorkingDir/skydrive.log"
 
-password_check
+password_set
+
+password_require
 
 #exit
 

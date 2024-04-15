@@ -13,58 +13,7 @@
         body {background-color: #0d1118;}
     
         
-        .switch {
-            margin-top: 1em;
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 24px;
-        }
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 20px; 
-            width: 20px; 
-            left: 2px; 
-            bottom: 2px; 
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-        input:checked + .slider {
-            background-color: #2196F3;
-        }
-        input:focus + .slider {
-            box-shadow: 0 0 1px #2196F3;
-        }
-        input:checked + .slider:before {
-            -webkit-transform: translateX(16px); 
-            -ms-transform: translateX(16px); 
-            transform: translateX(16px); 
-        }
         
-        .slider.round {
-            border-radius: 24px; 
-        }
-        .slider.round:before {
-            border-radius: 50%;
-        }
     </style>
     
     
@@ -88,7 +37,7 @@
                 <form method="post" enctype=multipart/form-data id="settings-form">
                     
                     <div class='w-1/2'>
-                        <h3 >Power</h3>
+                        <b>Power</b>
                         <hr>
                         <div>
                             <button class="border-2 p-2 mt-2 mr-4" id="powerButtonShutdown" type="submit" name="settings-power-shutdown" value="shutdown">
@@ -101,22 +50,53 @@
                     </div>
                     <br>
                     <div class='w-1/2'>
-                        <h3 >General</h3>
+                        <b>General</b>
                         <hr>
                         <div>
-                            <button class="border-2 p-2 mt-2 mr-4" id="query_info" type="submit" name="settings-general" value="get-info">
-                                Query system info
-                            </button>
-                            <br>
                             <div>
                                 <label class="switch">
-                                    <input type="checkbox" id="pcie_toggle_switch" name="adjust_ar" value="true" {{ useGen3Mode }}>
+                                    <input type="checkbox" id="pcie_toggle_switch" name="pcie" value="true" {{ useGen3Mode }}>
                                     <span class="slider round"></span>
                                 </label>
                                 <label for="pcie_toggle_switch" class="form-check-label">Use Experimental PCIe GEN-3 mode. (requires restart)</label>
                             </div>
+                            <div>
+                                <label class="switch">
+                                    <input type="checkbox" id="use_password_toggle_switch" name="password_switch" value="true" {{ requirePasswordOnLogin }}>
+                                    <span class="slider round"></span>
+                                </label>
+                                <label for="use_password_toggle_switch" class="form-check-label">Require Password to use.</label>
+                            </div>
                             
-                        </div>  
+                        </div>
+                        <br> 
+                        <div>
+                           
+                            <table class="table-stat">
+                                <thead>
+                                    <tr>
+                                        <th>System Info</th>
+                                        <th></th>
+                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                
+                                    <tr>
+                                        <td>CPU Temperature</td>
+                                        <td>{{ cpuTemp }} &#176; C</td>
+                                    </tr>
+                                    <tr>
+                                        <td>GPU Temperature</td>
+                                        <td>{{ gpuTemp }} &#176; C</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SSD Storage Space</td>
+                                        <td>{{ usedBytes }} / {{ totalBytes }}  ({{ usagePercent }}%)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div> 
                     </div>
                     
                 </form>
@@ -137,25 +117,42 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('/get_pcie_mode', {
+            fetch('/get_settings', {
                 method: 'GET'
             })
             .then(response => response.json())
             .then(data => {
-                var toggleSwitch = document.getElementById('pcie_toggle_switch');
-                toggleSwitch.checked = data["pcie-gen3-mode"]; // Make sure this is a boolean
+                console.log(data)
+                var toggleSwitchPcie = document.getElementById('pcie_toggle_switch');
+                var toggleSwitchPass = document.getElementById('use_password_toggle_switch');
+                toggleSwitchPcie.checked = data["pcie-gen3-mode"];
+                toggleSwitchPass.checked = data["require-pass"];
             })
             .catch(error => {
                 console.error('Error fetching mode:', error);
             });
             document.getElementById('pcie_toggle_switch').addEventListener('change', function() {
-                var useGen3 = this.checked ? 'true' : 'false'; // Convert boolean to string
-                fetch('/set_pcie_mode', {
+                var useGen3 = this.checked ? 'true' : 'false';
+                fetch('/set_settings', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'mode=' + useGen3
+                    body: 'pcieMode=' + useGen3
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Mode updated:', data);
+                });
+            });
+            document.getElementById('use_password_toggle_switch').addEventListener('change', function() {
+                var requrirePass = this.checked ? 'true' : 'false';
+                fetch('/set_settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'passmode=' + requrirePass
                 })
                 .then(response => response.json())
                 .then(data => {

@@ -1,6 +1,8 @@
-from app import app
+from app import app,auth
 from app.file_handler import FileHandler
-from flask import render_template, jsonify, request, send_from_directory,make_response
+from flask import render_template, jsonify, request, send_from_directory,make_response,flash
+from flask_httpauth import HTTPBasicAuth
+from functools import wraps
 from werkzeug.utils import secure_filename
 import urllib.parse
 import os,subprocess,json
@@ -10,26 +12,65 @@ import os,subprocess,json
 file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
 
 PATH = os.path.dirname(os.path.dirname(__file__))
+
+
+
+users = {
+    "admin": generate_password_hash("password")
+}
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users:
+        return check_password_hash(users[username], password)
+    return False
+
+
+def conditional_auth(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if app.config['REQUIRE_AUTH']:
+            return auth.login_required(f)(*args, **kwargs)
+        return f(*args, **kwargs)
+    return decorated_function
+
 print("PATH:  ",PATH)
-def load_settings_pcie_mode():
+def load_settings():
     
     with open(os.path.join(PATH,"config/settings.json")) as jf:
         settings_data = json.load(jf)
 
         print(settings_data.get("pcie_gen3_mode"))
-        return settings_data.get("pcie_gen3_mode")
+        return [settings_data.get("pcie_gen3_mode"),settings_data.get("require_pass")]
         
 
 
-def saveSettings(use_gen3):
-    jsonStr = {
-        "pcie_gen3_mode": use_gen3,
-    }
-    with open(os.path.join(PATH,"config/settings.json"), "w") as f:
-        json.dump(jsonStr, f)
+def save_settings(use_gen3=None,reqPass=None):
+    settings_file = os.path.join(PATH, "config/settings.json")
+    # Load existing settings
+    if os.path.exists(settings_file):
+        with open(settings_file, "r") as f:
+            settings_data = json.load(f)
+    else:
+        settings_data = {}
+
+    # Update settings based on provided parameters
+    if use_gen3 is not None:
+        settings_data["pcie_gen3_mode"] = use_gen3
+    if reqPass is not None:
+        settings_data["require_pass"] = reqPass
+
+    # Save updated settings
+    with open(settings_file, "w") as f:
+        json.dump(settings_data, f, indent=4)
 
 
-
+def size(size):
+    for unit in ("", "K", "M", "G", "T"):
+        if abs(size) < 1024.0:
+            return f"{size:3.1f}{unit}B"
+        size /= 1024.0
+    return "null"
 
 
 
@@ -161,36 +202,67 @@ def settings():
         print('shutting down')
         os.system("sudo shutdown")
         
+    cpu_temp = int(subprocess.check_output('cat /sys/class/thermal/thermal_zone0/temp', shell=True, text=True))/1000  
+    gpu_temp = subprocess.check_output('vcgencmd measure_temp', shell=True, text=True).replace("temp=","").replace("'C","")
+    storage_array = subprocess.check_output("df /mnt/nvme | awk -F ' ' '{print $3}{print $4}' | tail -n 2", shell=True, text=True).split("\n")
+
+    #* 1000 for 1kb block size
+    bytes_used = int(storage_array[0]) * 1000
+    bytes_available = int(storage_array[1]) * 1000
+    bytes_total = bytes_available + bytes_used
+
+    print(bytes_total)
     
-    if(request.form.get('settings-general') == 'get-info'):
-        print("Get info ran!")
-        
-        cpu_temp = subprocess.check_output('vcgencmd measure_temp', shell=True, text=True)
+    print(storage_array)
         
 
-        print(cpu_temp)
+    
 
+    
+    return render_template("settings.html",cpuTemp = cpu_temp, gpuTemp = gpu_temp, usedBytes=size(int(storage_array[0]) * 1000),totalBytes=size(int(bytes_total)),usagePercent=round((bytes_used/bytes_total)* 100,2))
 
-
-
-    return render_template("settings.html")
-
-@app.route("/get_pcie_mode", methods=['GET'])
-def get_pcie_mode():
+@app.route("/get_settings", methods=['GET'])
+def get_settings():
     # Ensure to return a boolean value
-    return jsonify({"pcie-gen3-mode": load_settings_pcie_mode()})
+    return jsonify({"pcie-gen3-mode": load_settings()[0],"require-pass": load_settings()[1],})
 
-@app.route("/set_pcie_mode", methods=['POST'])
-def set_pcie_mode():
-    useGen3 = request.form.get('mode') == 'true'  # Convert string to boolean
-    saveSettings(useGen3)
-    return jsonify({"pcie-gen3-mode": useGen3})
+@app.route("/set_settings", methods=['POST'])
+def set_settings():
+    print(request.form)
+    
+    # Check if 'pcieMode' is present in the request and handle it
+    if 'pcieMode' in request.form:
+        useGen3 = request.form.get('pcieMode') == 'true'
+        print("PCIe Mode:", useGen3)
+        save_settings(use_gen3=useGen3)
 
+        if useGen3:
+            print("Enabling Gen 3")
+            subprocess.run(["sudo", "sed", "-i", "s/dtparam=pciex1/dtparam=pciex1_gen=3/", "/boot/firmware/config.txt"], check=True)
+        else:
+            print("Enabling Gen 1")
+            subprocess.run(["sudo", "sed", "-i", "s/dtparam=pciex1_gen=3/dtparam=pciex1/", "/boot/firmware/config.txt"], check=True)
+
+    # Check if 'passmode' is present in the request and handle it by changing settings file
+    if 'passmode' in request.form:
+        reqPass = request.form.get('passmode') == 'true'
+        print("Require Password:", reqPass)
+        save_settings(reqPass=reqPass)
+
+    
+        
+    response_data = {
+        "pcie-gen3-mode": 'pcieMode' in request.form and request.form.get('pcieMode') == 'true',
+        "require-pass": 'passMode' in request.form and request.form.get('passMode') == 'true'
+    }
+    return jsonify(response_data)
     
 
 
 #home
 @app.route("/", methods=['GET'])
+
+@conditional_auth
 def index():
     files = file_handler.get_file_list()
     return render_template("index.html", file_list=files)

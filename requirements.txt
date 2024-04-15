@@ -1,6 +1,7 @@
 blinker==1.7.0
 click==8.1.7
 Flask==3.0.2
+Flask-HTTPAuth==4.8.0
 gunicorn==21.2.0
 hurry==1.1
 hurry.filesize==0.9

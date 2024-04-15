@@ -1,1 +1,4 @@
-{"pcie_gen3_mode": false}
+{
+    "pcie_gen3_mode": false,
+    "require_pass": true
+}
