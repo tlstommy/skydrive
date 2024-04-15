@@ -22,10 +22,13 @@ make_venv(){
     
   else
     echo "venv doesnt exist."
-    python3 -m venv .venv
+    /usr/bin/python3 -m venv .venv
     source .venv/bin/activate
 
   fi
+  print_header "Installing python packages."
+  sudo /usr/bin/python3 -m pip install -r requirements.txt --user #> /dev/null &
+  show_loader "   Installing packages...    "
 
 }
 
@@ -365,7 +368,7 @@ get_network_mode(){
 set_mode(){
   if [[ $wifiMode == "lan" ]]; then
     echo "lan mode"
-  elif [[ $wifiMode == "ap"]]; then
+  elif [[ $wifiMode == "ap" ]]; then
   
     echo "ap mode"
   
@@ -497,7 +500,7 @@ get_network_mode
 
 echo ${wifiMode}
 
-exit
+#exit
 
 # Create the log file
 touch "$currentWorkingDir/skydrive.log"
@@ -508,7 +511,7 @@ password_require
 
 setup_samba
 
-exit
+#exit
 
 make_venv
 
@@ -520,11 +523,6 @@ enable_pcie_interface
 
 check_and_mount_nvme_drive
 
-
-
-print_header "Installing python packages."
-sudo pip3 install -r requirements.txt #> /dev/null &
-show_loader "   Installing packages...    "
 
 node_install
 
