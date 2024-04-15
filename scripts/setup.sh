@@ -185,9 +185,8 @@ password_set(){
     cd config
     touch pass
     cd ..
-    local password_file="$currentDir/config/pass"
-    local password
-    local password_confirm
+    password_file="$currentDir/config/pass"
+   
 
     # Prompt for the password
     echo -n "Enter a password: "
@@ -261,6 +260,11 @@ update_rc_local(){
 
 setup_samba(){
 
+  local junk
+  print_bold "Setting up SMB (samba)..."
+ 
+  
+  
   sudo apt-get install -y samba samba-common-bin
 
   
@@ -271,34 +275,137 @@ setup_samba(){
   directory mask=0777
   public=no" | sudo tee -a /etc/samba/smb.conf
 
+  print_bold "Creating new SMB User 'pi' with previously specified password..."
+  
+  echo -e "${password}\n${password}" | sudo smbpasswd -a -s pi
 
+  #restart samba service
+  sudo systemctl restart smbd
+
+
+  print_success "\nCreated new samba share!"
+  print_underline "Samba login info. (write this down!):"
+  print_bold "Username:  pi"
+  print_bold "Password:  ${password}"
+  print_bold "Share:     \\\\skydrive\skydrive-smb"
+
+  echo -e "\nPress ENTER to continue setup..."
+  read -s junk
+}
+
+get_network_mode(){
   while true; do
+    clear
+    print_bold "How would you like to use Skydrive?"
+    print_bold "[1] Use Skydrive as a network attached device on the current network."
+    print_bold "[2] Use Skydrive as a standalone device with a broadcasted network.\n"
+
     
-    print_bold "\nPlease select a username for logging into SkyDrive over smb (Samba).\n"
-   
-    read -p "username: " username
-    read -p "confirm username: " username_confirm
+    read -p "Which mode you like to choose? [1, 2]: " userInput
+
+    userInput="${userInput^^}"
+
+    if [[ $userInput == "1" ]]; then
+        print_success "You chose option 1, 'Network attached device'.\n"
+        sleep 1
+        while true; do
 
 
+          read -p "Confirm: Would you like to proceed with the installion using this mode? [Y/n]: " userInput
+          userInput="${userInput^^}"
 
-    if [ "$username" != "$username_confirm" ]; then
-      print_warn "Usernames do not match! Please try again."
-      sleep 2
+          if [[ $userInput == "Y" ]]; then
+              print_success "You entered 'Y'. Proceeding with the installation.\n"
+              sleep 1
+              wifiMode=lan
+              break
+          elif [[ $userInput == "N" ]]; then
+              print_warn "Exiting!"
+              exit
+          else
+              print_error "Invalid input! Please try again."
+              sleep 1
+          fi
+       
+        done
+        break
+    elif [[ $userInput == "2" ]]; then
+        print_success "You chose option 2, 'Standalone device with a broadcasted network'.\n"
+        sleep 1
+        while true; do
 
 
- 
+          read -p "Confirm: Would you like to proceed with the installion using this mode? [Y/n]: " userInput
+          userInput="${userInput^^}"
+
+          if [[ $userInput == "Y" ]]; then
+              print_success "You entered 'Y'. Proceeding with the installation.\n"
+              sleep 1
+              wifiMode=ap
+              break
+          elif [[ $userInput == "N" ]]; then
+              print_warn "Exiting!"
+              exit
+          else
+              print_error "Invalid input! Please try again."
+              sleep 1
+          fi
+       
+        done
+        
+        
+        break
     else
-      
-
-      echo "username '$username' has been set!"
-      sudo smbpasswd -a $username
-      
-      
-      break
+        print_error "Invalid input! Please try again."
+        sleep 1
     fi
   done
+}
+
+set_mode(){
+  if [[ $wifiMode == "lan" ]]; then
+    echo "lan mode"
+  elif [[ $wifiMode == "ap"]]; then
+  
+    echo "ap mode"
+  
+  
+  else
+    print_error "Mode error 375!"
+    sleep 1
+  fi
+}
 
 
+opening_prompt(){
+  while true; do
+    clear
+    print_header "Current Directory: $currentWorkingDir"
+    print_bold "\nThis script will install all the required packages and setup SkyDrive!\n"
+    print_underline "$(print_bold "It will do the following:\n")"
+    echo "   [•] Set the hostname to 'Skydrive'."
+    echo "   [•] Setup bonjour."
+    echo "   [•] Create a log file."
+    echo "   [•] Mount the NVME drive."
+    echo "   [•] Setup SMB & NPM."
+    echo "   [•] Update rc.local so that the Webserver starts on boot."
+    echo -e "   [•] Install Required Python packages via pip.\n"
+
+    read -p "Would you like to proceed? [Y/n] " userInput
+    userInput="${userInput^^}"
+
+    if [[ $userInput == "Y" ]]; then
+        print_success "You entered 'Y'. Proceeding with the installation.\n"
+        sleep 2
+        break
+    elif [[ $userInput == "N" ]]; then
+        print_warn "Exiting!"
+        exit
+    else
+        print_error "Invalid input! Please try again."
+        sleep 1
+    fi
+done
 }
 
 show_loader(){
@@ -335,6 +442,10 @@ print_blink() {
 
 print_bold() {
   echo -e "${bold}$1${normal}"
+}
+
+print_bold_no_e() {
+  echo  "${bold}$1${normal}"
 }
 
 print_underline() {
@@ -379,10 +490,14 @@ if [ "$currentFolder" == "scripts" ]; then
   currentWorkingDir=$(pwd)
 fi
 
-echo -e "$currentDir"
-echo -e "$currentWorkingDir"
-echo -e "$currentFolder"
-echo -e "$ipAddress"
+
+opening_prompt
+
+get_network_mode
+
+echo ${wifiMode}
+
+exit
 
 # Create the log file
 touch "$currentWorkingDir/skydrive.log"
@@ -391,7 +506,9 @@ password_set
 
 password_require
 
-#exit
+setup_samba
+
+exit
 
 make_venv
 
@@ -413,3 +530,4 @@ node_install
 
 update_rc_local
 
+set_mode
