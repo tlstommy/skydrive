@@ -182,18 +182,20 @@ password_set(){
     print_warn "Note: This is diffrent than the Pi User Password.\n"
 
     echo $currentDir
-    touch $currentDir/config/ pass
+    cd config
+    touch pass
+    cd ..
     local password_file="$currentDir/config/pass"
     local password
     local password_confirm
 
     # Prompt for the password
-    echo -n "Enter new password: "
+    echo -n "Enter a password: "
     read -s password
     echo
 
     # Prompt for the password again for confirmation
-    echo -n "Confirm new password: "
+    echo -n "Confirm password: "
     read -s password_confirm
     echo
 
@@ -243,7 +245,7 @@ password_require(){
         print_error "Invalid input! Please try again."
         sleep 1
     fi
-done
+  done
 
 }
 
@@ -255,6 +257,48 @@ update_rc_local(){
   else
     print_error "ERROR: Unable to add to rc.local"
   fi
+}
+
+setup_samba(){
+
+  sudo apt-get install -y samba samba-common-bin
+
+  
+  echo "[skydrive-smb]
+  path = /mnt/nvme/data
+  writeable=Yes
+  create mask=0777
+  directory mask=0777
+  public=no" | sudo tee -a /etc/samba/smb.conf
+
+
+  while true; do
+    
+    print_bold "\nPlease select a username for logging into SkyDrive over smb (Samba).\n"
+   
+    read -p "username: " username
+    read -p "confirm username: " username_confirm
+
+
+
+    if [ "$username" != "$username_confirm" ]; then
+      print_warn "Usernames do not match! Please try again."
+      sleep 2
+
+
+ 
+    else
+      
+
+      echo "username '$username' has been set!"
+      sudo smbpasswd -a $username
+      
+      
+      break
+    fi
+  done
+
+
 }
 
 show_loader(){

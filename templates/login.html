@@ -1,0 +1,93 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/theme.css')}}">
+    <title>Skydrive // Login</title>
+    <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/theme.css')}}">
+    <title>WPSD // Settings</title>
+    <style>
+        body {
+            background-color: #0d1118;
+            margin: 0;
+            height: 100vh;
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+        form {
+            width: 320px;
+            background: #202732;
+            padding: 40px; 
+            border-radius: 8px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        h1 {
+            color: #ffffff;
+            
+            font-size: 1.5em;
+        }
+        .login-status {
+            color: rgb(255, 0, 0);
+        }
+
+        hr {
+            width: 80%;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffffff;
+            text-align: left;
+        }
+        input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 16px; 
+            border: 1px solid #5865F3;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%; 
+            padding: 10px;
+            margin-top: 8px;
+            background-color: #5865F3; 
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer; 
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #4e5cd8;
+        }
+    </style>
+</head>
+<body>
+    <form method="post">
+        <h1>SkyDrive</h1>
+        &#9866;&#9866;&#9866;&#9866;&#9866;&#9866;&#9866;&#9866;&#9866;
+        <div>
+            <input type="password" placeholder="Password" name="password" id="password" required>
+            <p class="login-status">{{ login_status }}</p>
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+</body>
+</html>

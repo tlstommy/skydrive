@@ -1,11 +1,13 @@
 from app import app,auth
 from app.file_handler import FileHandler
-from flask import render_template, jsonify, request, send_from_directory,make_response,flash
+from flask import render_template, jsonify, request, send_from_directory,make_response,flash,session, redirect, url_for
 from flask_httpauth import HTTPBasicAuth
 from functools import wraps
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+
 import urllib.parse
-import os,subprocess,json
+import os,subprocess,json,random,time
 
 #routes for requests and such
 
@@ -13,26 +15,14 @@ file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
 
 PATH = os.path.dirname(os.path.dirname(__file__))
 
+with open(os.path.join(PATH,"config/pass")) as passfile:
+    pw = str(passfile.readline().strip())
+    
+    
+    app.secret_key = (pw+str(len(pw)))
+    print(app.secret_key)
+    hashed_password = generate_password_hash(pw)
 
-
-users = {
-    "admin": generate_password_hash("password")
-}
-
-@auth.verify_password
-def verify_password(username, password):
-    if username in users:
-        return check_password_hash(users[username], password)
-    return False
-
-
-def conditional_auth(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if app.config['REQUIRE_AUTH']:
-            return auth.login_required(f)(*args, **kwargs)
-        return f(*args, **kwargs)
-    return decorated_function
 
 print("PATH:  ",PATH)
 def load_settings():
@@ -72,9 +62,25 @@ def size(size):
         size /= 1024.0
     return "null"
 
+@app.route('/secure-page')
+def secure_page():
+    if app.config['REQUIRE_AUTH']:
+        if not session.get('authenticated'):
+            return redirect(url_for('login'))
+        return "This is a secure page."
 
 
-
+#for login page
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if check_password_hash(hashed_password, password):
+            session['authenticated'] = True 
+            return redirect(url_for('index'))
+        else:
+            return render_template('login.html',login_status='Invalid Password!')
+    return render_template('login.html')
 
 
 
@@ -186,6 +192,12 @@ def preview_file():
 #home
 @app.route("/settings", methods=['GET','POST'])
 def settings():
+    print(session.get('authenticated'))
+    if app.config['REQUIRE_AUTH']:
+        if not session.get('authenticated'):
+            return redirect(url_for('login'))
+
+
     print("req ",request.form)
 
 
@@ -261,8 +273,11 @@ def set_settings():
 
 #home
 @app.route("/", methods=['GET'])
-
-@conditional_auth
 def index():
+    if app.config['REQUIRE_AUTH']:
+        if not session.get('authenticated'):
+            return redirect(url_for('login'))
+        
+
     files = file_handler.get_file_list()
     return render_template("index.html", file_list=files)
