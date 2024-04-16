@@ -14,14 +14,14 @@ yellow=$(tput setaf 3)
 
 #make a venv if one doesnt exist
 make_venv(){
-  
+  print_header "Setting up VENV."
   echo -e "cwd: - $currentDir"
   if [ -d "$currentDir/.venv" ]; then
-    echo "venv exists."
+    echo "VENV exists."
     source .venv/bin/activate
     
   else
-    echo "venv doesnt exist."
+    echo "VENV doesnt exist. Creating one..."
     /usr/bin/python3 -m venv .venv
     source .venv/bin/activate
 
@@ -36,13 +36,15 @@ make_venv(){
 #look to see if a drive exists
 check_and_mount_nvme_drive(){
 
+    print_header "Checking for available NVME drives..."
+
     read nvme_drive drive_size drive_type mount_point < <(lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS | grep "nvme" | awk 'NR==1 {print $1, $2, $3, $4}')
 
     if [ -n "$nvme_drive" ]; then
         echo "NVMe drive detected!"
         echo "Name: $nvme_drive, Size: $drive_size, Type: $drive_type, Mountpoint: $mount_point"
 
-        print_warn "\nThe $drive_size drive, $nvme_drive, will be partitioned and all existing data will be destroyed."
+        print_warn "\nThe $drive_size drive, $nvme_drive, will be partitioned and all existing data on the drive will be destroyed."
 
         read -p "Would you like to proceed? [Y/n] " userInput
         userInput="${userInput^^}"
@@ -76,7 +78,7 @@ check_and_mount_nvme_drive(){
         sleep 3
         echo "mounting drive to /mnt/nvme..."
         sudo mkdir -p /mnt/nvme
-        echo "${nvme_drive}p1"
+        
         sudo mount "/dev/${nvme_drive}p1" /mnt/nvme
 
 
@@ -90,7 +92,7 @@ check_and_mount_nvme_drive(){
           echo "UUID=$UUID /mnt/nvme ext4 defaults,noatime 0 2" | sudo tee -a /etc/fstab
           echo "Added NVMe drive to /etc/fstab for automatic mounting."
         else
-            echo "NVMe drive mount line  already in /etc/fstab."
+          echo "NVMe drive mount line  already in /etc/fstab."
         fi
             
 
@@ -99,8 +101,8 @@ check_and_mount_nvme_drive(){
         print_success "\nDrive /dev/${nvme_drive}p1 mounted and formatted!"
 
       else
-        echo "No NVMe drive detected!"
-        echo "Please reboot your pi and re-run this script to finish installation and allow an nvme drive to be detected! If you havent ran this setup script before this is normal."
+        print_warn "No NVMe drive detected!"
+        echo "Please reboot your pi and re-run this script to finish installation and allow an NVME drive to be detected! If you havent ran this setup script before this is normal."
         exit
     fi
 }
@@ -108,7 +110,7 @@ check_and_mount_nvme_drive(){
 
 enable_pcie_interface(){
   #enable pcie connector
-  echo "run enable interfaces - dtparam check"
+  print_header "Enabling PCI-E lanes.."
 
 
   #add line to boot config file if its not there
@@ -119,11 +121,12 @@ enable_pcie_interface(){
     echo -e "Please reboot your pi and re-run this script to finish installation!"
     exit 
   fi
+  print_success "PCI-E lanes enabled."
 
 }
 
 node_install(){
-  print_header "Installing NodeJS, NPM & Tailwind."
+  print_header "Installing NodeJS, NPM & Tailwind..."
 
   sudo apt-get install -y nodejs
   sudo apt-get install -y npm
@@ -132,7 +135,8 @@ node_install(){
 
   npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css
   npx tailwindcss -i ./static/src/theme.css -o ./static/dist/css/theme.css
-
+  print_success "Node and it's packages installed!"
+  
 }
 
 
@@ -141,8 +145,8 @@ set_hostname(){
   print_header "Setting hostname"
   sudo bash -c 'echo "skydrive" > "/etc/hostname"'
   sudo sed -i 's/127.0.0.1\s*localhost/127.0.0.1 skydrive/' /etc/hosts
-  print_success "Hostname set to skydrive!"
-  echo -e "(This can be changed using raspi-config.) \n"
+  print_success "\nHostname set to skydrive!"
+  echo -e "(This can be changed using raspi-config.)"
 }
 
 setup_bonjour(){
@@ -159,33 +163,35 @@ setup_bonjour(){
 
 create_settings_config(){
   local type="$1"
-  echo $currentDir
+  
   case "$type" in
-        1)
-            #PASSWORD ENABLED
-            JSON='{"pcie_gen3_mode": false,"require_pass": true}'
-            echo $JSON > $currentDir/config/settings.json
-            ;;
-        2)
-            # PASSWORD DISABLED
-            JSON='{"pcie_gen3_mode": false,"require_pass": false}'
-            echo $JSON > $currentDir/config/settings.json
-            ;;
-        *)
-            # Default case
-            echo "Error: Unknown type '$type'"
-            ;;
-    esac 
+    1)
+        #PASSWORD ENABLED
+        JSON='{"pcie_gen3_mode": false,"require_pass": true}'
+        echo $JSON > $currentDir/config/settings.json
+        ;;
+    2)
+        # PASSWORD DISABLED
+        JSON='{"pcie_gen3_mode": false,"require_pass": false}'
+        echo $JSON > $currentDir/config/settings.json
+        ;;
+    *)
+        # Default case
+        print_error "Error: Unknown type '$type'"
+        ;;
+  esac 
+  
+  print_success "Configuration file created in $currentDir/config/ !"
 
 }
 
 password_set(){
   while true; do
     clear
-    print_bold "Please specify a password for Skydrive."
+    print_bold "Please specify a password to use when connecting to Skydrive."
     print_warn "Note: This is diffrent than the Pi User Password.\n"
 
-    echo $currentDir
+    
     cd config
     touch pass
     cd ..
@@ -216,7 +222,7 @@ password_set(){
       # Save the password to the specified file
       echo "$password" > "$password_file"
 
-      echo "Password has been set!"
+      print_success "Password has been set!"
       break
     fi
 
@@ -253,7 +259,7 @@ password_require(){
 }
 
 update_rc_local(){
-  print_header "Updating rc.local"
+  print_header "Updating rc.local,.."
   if grep -Fxq "exit 0" /etc/rc.local; then
     sudo sed -i "/exit 0/i cd $currentWorkingDir && sudo bash $currentWorkingDir/scripts/start.sh > $currentWorkingDir/skydrive.log 2>&1 &" /etc/rc.local
     print_success "Added startup line to rc.local!"
@@ -265,7 +271,7 @@ update_rc_local(){
 setup_samba(){
 
   local junk
-  print_bold "Setting up SMB (samba)..."
+  print_header "Setting up SMB (samba)..."
  
   
   
@@ -494,6 +500,8 @@ if [ "$currentFolder" == "scripts" ]; then
   currentWorkingDir=$(pwd)
 fi
 
+#run setup already check here
+
 
 opening_prompt
 
@@ -505,10 +513,11 @@ echo ${wifiMode}
 
 # Create the log file
 touch "$currentWorkingDir/skydrive.log"
+print_success "Created logfile, skydrive.log"
 
 password_set
 
-password_require
+#password_require
 
 setup_samba
 
