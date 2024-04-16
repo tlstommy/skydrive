@@ -34,4 +34,4 @@ else
 fi
 
 echo "starting SkyDrive webserver!"
-sudo $currentDir/.venv/bin/gunicorn -w 4 -t 4 -b 0.0.0.0:80 'app:app' --timeout 600
+sudo gunicorn -w 4 -t 4 -b 0.0.0.0:80 'app:app' --timeout 600
