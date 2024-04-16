@@ -26,8 +26,9 @@ make_venv(){
     source .venv/bin/activate
 
   fi
+  chmod -R 777 $currentDir/.venv
   print_header "Installing python packages."
-  sudo /usr/bin/python3 -m pip install -r requirements.txt --user #> /dev/null &
+  sudo /usr/bin/python3 -m pip install -r requirements.txt --break-system-packages #> /dev/null &
   show_loader "   Installing packages...    "
 
 }
