@@ -31,11 +31,11 @@ def load_settings():
         settings_data = json.load(jf)
 
         print(settings_data.get("pcie_gen3_mode"))
-        return [settings_data.get("pcie_gen3_mode"),settings_data.get("require_pass")]
+        return [settings_data.get("pcie_gen3_mode"),settings_data.get("require_pass"),settings_data.get("apmode")]
         
 
 
-def save_settings(use_gen3=None,reqPass=None):
+def save_settings(use_gen3=None,reqPass=None,netmode=None):
     settings_file = os.path.join(PATH, "config/settings.json")
     # Load existing settings
     if os.path.exists(settings_file):
@@ -49,6 +49,8 @@ def save_settings(use_gen3=None,reqPass=None):
         settings_data["pcie_gen3_mode"] = use_gen3
     if reqPass is not None:
         settings_data["require_pass"] = reqPass
+    if netmode is not None:
+        settings_data["apmode"] = netmode
 
     # Save updated settings
     with open(settings_file, "w") as f:
@@ -236,7 +238,7 @@ def settings():
 @app.route("/get_settings", methods=['GET'])
 def get_settings():
     # Ensure to return a boolean value
-    return jsonify({"pcie-gen3-mode": load_settings()[0],"require-pass": load_settings()[1],})
+    return jsonify({"pcie-gen3-mode": load_settings()[0],"require-pass": load_settings()[1],"wifi-mode": load_settings()[2]})
 
 @app.route("/set_settings", methods=['POST'])
 def set_settings():
@@ -261,11 +263,31 @@ def set_settings():
         print("Require Password:", reqPass)
         save_settings(reqPass=reqPass)
 
-    
+    if 'netmode' in request.form:
+        netmode = request.form.get('netmode') == 'true'
+        print("net Mode:", netmode)
+        save_settings(netmode=netmode)
+
+        
+        if netmode:
+            print("Enabling ap")
+
+            with open(os.path.join(PATH,"config/pass")) as passfile:
+                password = str(passfile.readline().strip())
+                
+            subprocess.run(["sudo","nmcli","device","wifi","hotspot","ssid","SkyDrive","password",password], check=True)
+        else:
+            print("disconnecting ap and reconncecting to previous network at wlan0")
+            subprocess.run(["sudo","nmcli","device","disconnect","wlan0"], check=True)
+
+            subprocess.run(["sudo","nmcli","device","up","wlan0"], check=True)
+
+        
         
     response_data = {
         "pcie-gen3-mode": 'pcieMode' in request.form and request.form.get('pcieMode') == 'true',
-        "require-pass": 'passMode' in request.form and request.form.get('passMode') == 'true'
+        "require-pass": 'passMode' in request.form and request.form.get('passMode') == 'true',
+        "wifi-mode": 'netmode' in request.form and request.form.get('netmode') == 'true'
     }
     return jsonify(response_data)
     

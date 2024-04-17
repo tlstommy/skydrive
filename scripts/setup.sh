@@ -26,10 +26,10 @@ make_venv(){
     source .venv/bin/activate
 
   fi
-  chmod -R 777 $currentDir/.venv
+  chmod -R 777 $currentDir/.venv > /dev/null &
   print_header "Installing python packages."
-  sudo /usr/bin/python3 -m pip install -r requirements.txt --break-system-packages #> /dev/null &
-  #show_loader "   Installing packages...    "
+  sudo /usr/bin/python3 -m pip install -r requirements.txt --break-system-packages > /dev/null &
+  show_loader "   Installing packages...    "
 
 }
 
@@ -159,24 +159,9 @@ setup_bonjour(){
 }
 
 create_settings_config(){
-  local type="$1"
-  
-  case "$type" in
-    1)
-        #PASSWORD ENABLED
-        JSON='{"pcie_gen3_mode": false,"require_pass": true}'
-        echo $JSON > $currentDir/config/settings.json
-        ;;
-    2)
-        # PASSWORD DISABLED
-        JSON='{"pcie_gen3_mode": false,"require_pass": false}'
-        echo $JSON > $currentDir/config/settings.json
-        ;;
-    *)
-        # Default case
-        print_error "Error: Unknown type '$type'"
-        ;;
-  esac 
+
+  JSON='{"pcie_gen3_mode": false,"require_pass": true,"apmode": true}'
+  echo $JSON > $currentDir/config/settings.json
   
   print_success "Configuration file created in $currentDir/config/ !"
 
@@ -225,34 +210,6 @@ password_set(){
 
     
   done   
-}
-
-password_require(){
-  while true; do
-    clear
-    print_bold "Would you like the password to be required when connecting to SkyDrive?\n"
-    print_warn "It is recommended for use with sensitive files."
-   
-    read -p "Would you like to enable the password? [Y/n] " userInput
-    userInput="${userInput^^}"
-
-    if [[ $userInput == "Y" ]]; then
-        print_success "You entered 'Y'.\n"
-        sleep 2
-        create_settings_config 1
-
-        break
-    elif [[ $userInput == "N" ]]; then
-        print_warn "You entered 'N'. \n"
-        sleep 2
-        create_settings_config 2
-        break
-    else
-        print_error "Invalid input! Please try again."
-        sleep 1
-    fi
-  done
-
 }
 
 update_rc_local(){
@@ -371,12 +328,21 @@ get_network_mode(){
 
 set_mode(){
   if [[ $wifiMode == "lan" ]]; then
-    echo "lan mode"
+    echo "lan mode on:"
+    hostname -I | awk '{print $1}'
   elif [[ $wifiMode == "ap" ]]; then
-  
-    echo "ap mode"
-  
-  
+    local junk
+    clear
+    
+    #sudo nmcli device wifi hotspot ssid SkyDrive password ${password}
+    print_success "\nSkydrive Hotspot Mode enabled!"
+    print_underline "\nSkydrive Network Info:"
+    print_bold "Hostname:  SkyDrive"
+    print_bold "Password:  ${password}"
+    print_bold "\nThis network will be broadcasted from the Pi and can be connected to using the login details above."
+    sleep 1
+    echo -e "\nPress ENTER to continue setup..."
+    read -s junk
   else
     print_error "Mode error 375!"
     sleep 1
@@ -506,6 +472,10 @@ if [ "$currentFolder" == "scripts" ]; then
   currentDir=$(pwd)
   currentWorkingDir=$(pwd)
 fi
+get_network_mode
+password_set
+set_mode
+exit
 
 #run setup already check here
 alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
@@ -525,6 +495,7 @@ else
 
   #create part1 file for check later
   mkdir config
+  sudo chmod -R 777 $currentDir/config > /dev/null &
   cd config
   touch ranPart1.setup
   cd ..
@@ -537,14 +508,14 @@ else
 
 fi
 
+create_settings_config
+
 check_and_mount_nvme_drive
 
-exit
+
 get_network_mode
 
 echo ${wifiMode}
-
-#exit
 
 # Create the log file
 sudo touch "$currentWorkingDir/skydrive.log"
@@ -552,11 +523,10 @@ print_success "Created logfile, skydrive.log"
 
 password_set
 
-#password_require
 
 setup_samba
 
-#exit
+
 
 make_venv
 
@@ -564,7 +534,7 @@ set_hostname
 
 setup_bonjour
 
-enable_pcie_interface
+
 
 check_and_mount_nvme_drive
 
