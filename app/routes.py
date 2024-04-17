@@ -278,9 +278,9 @@ def set_settings():
             subprocess.run(["sudo","nmcli","device","wifi","hotspot","ssid","SkyDrive","password",password], check=True)
         else:
             print("disconnecting ap and reconncecting to previous network at wlan0")
-            subprocess.run(["sudo","nmcli","device","disconnect","wlan0"], check=True)
+            subprocess.run(["sudo","nmcli","device","disconnect","wlan0","&","sudo","nmcli","device","up","wlan0",">","pythonouttext.txt"], check=True)
 
-            subprocess.run(["sudo","nmcli","device","up","wlan0"], check=True)
+            
 
         
         

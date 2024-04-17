@@ -162,7 +162,7 @@ create_settings_config(){
 
   JSON='{"pcie_gen3_mode": false,"require_pass": true,"apmode": true}'
   echo $JSON > $currentDir/config/settings.json
-  
+  sudo chmod -R 777 $currentDir/config/settings.json
   print_success "Configuration file created in $currentDir/config/ !"
 
 }
@@ -495,7 +495,7 @@ else
 
   #create part1 file for check later
   mkdir config
-  sudo chmod -R 777 $currentDir/config > /dev/null &
+  sudo chmod -R 777 $currentDir/config # > /dev/null &
   cd config
   touch ranPart1.setup
   cd ..
