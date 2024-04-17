@@ -169,3 +169,5 @@ device-files/*
 
 
 testing-files/*
+
+config/*

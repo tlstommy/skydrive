@@ -101,8 +101,9 @@ check_and_mount_nvme_drive(){
         print_success "\nDrive /dev/${nvme_drive}p1 mounted and formatted!"
 
       else
-        print_warn "No NVMe drive detected!"
-        echo "Please reboot your pi and re-run this script to finish installation and allow an NVME drive to be detected! If you havent ran this setup script before this is normal."
+        print_warn "Error: No NVMe drive detected!"
+        echo "Please reboot your pi and re-run this script to finish installation and allow an NVME drive to be detected! If you havent rebooted this script before this is normal."
+        
         exit
     fi
 }
@@ -116,10 +117,6 @@ enable_pcie_interface(){
   #add line to boot config file if its not there
   if ! grep -Fxq "# Enable the PCIe External connector." /boot/firmware/config.txt; then
     echo -e "\n# Enable the PCIe External connector.\ndtparam=pciex1\n" | sudo tee -a /boot/firmware/config.txt > /dev/null
-
-
-    echo -e "Please reboot your pi and re-run this script to finish installation!"
-    exit 
   fi
   print_success "PCI-E lanes enabled."
 
@@ -387,6 +384,16 @@ set_mode(){
 }
 
 
+
+resume_prompt(){
+  
+  
+  print_header "Current Directory: $currentWorkingDir"
+  print_bold "\nWelcome back!\nSkyDrive will continue setup shortly...\n"
+  sleep 3
+    
+}
+
 opening_prompt(){
   while true; do
     clear
@@ -415,7 +422,7 @@ opening_prompt(){
         print_error "Invalid input! Please try again."
         sleep 1
     fi
-done
+  done
 }
 
 show_loader(){
@@ -501,10 +508,38 @@ if [ "$currentFolder" == "scripts" ]; then
 fi
 
 #run setup already check here
+alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
 
+#check if setup part 1 has been ran yet
+if [ -e "$alreadyRanFlagFile" ]; then
+  #it has ran before
+  resume_prompt
+  sudo rm -rf $currentDir/config/ranPart1.setup
+else
 
-opening_prompt
+  #it hasnt
+  echo "The file does not exist."
+  opening_prompt
+  
+  enable_pcie_interface
 
+  #create part1 file for check later
+  mkdir config
+  cd config
+  touch ranPart1.setup
+  cd ..
+  
+  
+  print_standout "\nPlease reboot your Pi and re-run this script to finish installation!"
+  print_bold "The install script will resume its installation procedure from the current steps.\n"
+  sleep 1
+  exit
+
+fi
+
+check_and_mount_nvme_drive
+
+exit
 get_network_mode
 
 echo ${wifiMode}
@@ -512,7 +547,7 @@ echo ${wifiMode}
 #exit
 
 # Create the log file
-touch "$currentWorkingDir/skydrive.log"
+sudo touch "$currentWorkingDir/skydrive.log"
 print_success "Created logfile, skydrive.log"
 
 password_set
