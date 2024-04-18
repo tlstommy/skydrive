@@ -109,9 +109,9 @@ check_and_mount_nvme_drive(){
 }
 
 
-enable_pcie_interface(){
+enable_interfaces(){
   #enable pcie connector
-  print_header "Enabling PCI-E lanes.."
+  print_header "Enabling PCI-E lanes..."
 
 
   #add line to boot config file if its not there
@@ -119,6 +119,17 @@ enable_pcie_interface(){
     echo -e "\n# Enable the PCIe External connector.\ndtparam=pciex1\n" | sudo tee -a /boot/firmware/config.txt > /dev/null
   fi
   print_success "PCI-E lanes enabled."
+
+  sleep 1
+
+  print_header "Arming I2C interface..."
+
+  
+  sudo sed -i 's/^dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/config.txt
+  
+  print_success "I2C Interface armed.\n"
+
+
 
 }
 
@@ -496,7 +507,7 @@ else
   echo "The file does not exist."
   opening_prompt
   
-  enable_pcie_interface
+  enable_interfaces
 
   #create part1 file for check later
   mkdir config

@@ -1,19 +1,23 @@
 from app import app,auth
 from app.file_handler import FileHandler
+from app.power_manager import PowerManager
 from flask import render_template, jsonify, request, send_from_directory,make_response,flash,session, redirect, url_for
 from flask_httpauth import HTTPBasicAuth
 from functools import wraps
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-
 import urllib.parse
 import os,subprocess,json,random,time
 
-#routes for requests and such
 
-file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
-
+LOW_VOLTAGE_CUTOFF = 3.20
 PATH = os.path.dirname(os.path.dirname(__file__))
+
+#routes for requests and such
+file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
+power_manager = PowerManager(1,0x36,LOW_VOLTAGE_CUTOFF)
+
+
 
 with open(os.path.join(PATH,"config/pass")) as passfile:
     pw = str(passfile.readline().strip())
