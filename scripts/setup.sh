@@ -185,6 +185,12 @@ password_set(){
     read -s password
     echo
 
+    if [ "${#password}" -lt 8 ]; then
+      print_warn "Password must be at least 8 characters long! Please try again."
+      sleep 2
+      continue
+    fi
+
     # Prompt for the password again for confirmation
     echo -n "Confirm password: "
     read -s password_confirm
@@ -337,7 +343,7 @@ set_mode(){
     #sudo nmcli device wifi hotspot ssid SkyDrive password ${password}
     print_success "\nSkydrive Hotspot Mode enabled!"
     print_underline "\nSkydrive Network Info:"
-    print_bold "Hostname:  SkyDrive"
+    print_bold "SSID:      SkyDrive"
     print_bold "Password:  ${password}"
     print_bold "\nThis network will be broadcasted from the Pi and can be connected to using the login details above."
     sleep 1
@@ -472,13 +478,12 @@ if [ "$currentFolder" == "scripts" ]; then
   currentDir=$(pwd)
   currentWorkingDir=$(pwd)
 fi
-get_network_mode
-password_set
-set_mode
-exit
+
 
 #run setup already check here
 alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
+password_set
+exit
 
 #check if setup part 1 has been ran yet
 if [ -e "$alreadyRanFlagFile" ]; then
