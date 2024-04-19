@@ -29,6 +29,7 @@ make_venv(){
   chmod -R 777 $currentDir/.venv > /dev/null &
   print_header "Installing python packages."
   sudo /usr/bin/python3 -m pip install -r requirements.txt --break-system-packages > /dev/null &
+  sudo apt-get install -y sysvbanner > /dev/null
   show_loader "   Installing packages...    "
 
 }
@@ -278,8 +279,8 @@ get_network_mode(){
   while true; do
     clear
     print_bold "How would you like to use Skydrive?"
-    print_bold "[1] Use Skydrive as a network attached device on the current network."
-    print_bold "[2] Use Skydrive as a standalone device with a broadcasted network.\n"
+    print_bold "[1] Use Skydrive as a network attached device on the current network. (LAN Mode)"
+    print_bold "[2] Use Skydrive as a standalone device with a broadcasted network. (AP Mode)\n"
 
     
     read -p "Which mode you like to choose? [1, 2]: " userInput
@@ -345,7 +346,7 @@ get_network_mode(){
 
 set_mode(){
   if [[ $wifiMode == "lan" ]]; then
-    echo "lan mode on:"
+    echo "Continuing with lan mode on address:"
     hostname -I | awk '{print $1}'
   elif [[ $wifiMode == "ap" ]]; then
     local junk
@@ -364,6 +365,24 @@ set_mode(){
     print_error "Mode error 375!"
     sleep 1
   fi
+}
+
+#check for i2c device
+detect_i2c_device(){
+  sudo i2cdetect -y 1
+  
+  output=$(sudo i2cget -y 1 0x36 2>&1) 
+  if [[ "$output" == "Error: Read failed" ]]; then
+      echo "Error detected: $output"
+      print_error "Error! no i2c device detected at address 0x36"
+      exit
+  else
+      #i2c 36 is found so continue
+      echo "$output"
+      
+  fi
+
+
 }
 
 
@@ -490,11 +509,8 @@ if [ "$currentFolder" == "scripts" ]; then
   currentWorkingDir=$(pwd)
 fi
 
-
 #run setup already check here
 alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
-password_set
-exit
 
 #check if setup part 1 has been ran yet
 if [ -e "$alreadyRanFlagFile" ]; then
@@ -523,6 +539,9 @@ else
   exit
 
 fi
+
+#for power, not really that nessecary
+detect_i2c_device
 
 create_settings_config
 
@@ -560,3 +579,33 @@ node_install
 update_rc_local
 
 set_mode
+
+
+sleep 3
+clear
+banner "SkyDrive"
+print_success "$(print_bold "SkyDrive has been successfully installed!")"
+
+print_header "Helpful Info:"
+echo "  [•] A QR code of the PiInk webUI can be brought up at any time by pressing the button labeled 'A' on the back of the PiInk display."
+echo "  [•] Have an issue or suggestion? Please, submit it here!"
+echo -e "      https://github.com/tlstommy/SkyDrive/issues\n"
+
+
+print_warn "$(print_bold "(Please reboot your Raspberry Pi to complete installation)")"
+print_bold "After your Pi is rebooted, you can access the web UI by going to $(print_blue "'skydrive.local'") or $(print_blue "'$ipAddress'") in your browser.\n"
+read -p "Would you like to restart your Raspberry Pi now? [Y/n] " userInput
+userInput="${userInput^^}"
+
+if [[ $userInput == "Y" ]]; then
+    print_success "You entered 'Y', Restarting now...\n"
+    sleep 2
+    sudo reboot now
+elif [[ $userInput == "N" ]]; then
+    print_warn "Please restart your Raspberry Pi later to apply changes.\n"
+    exit
+else
+    print_error "Unknown input, please restart later to apply changes.\n"
+    sleep 1
+fi
+
