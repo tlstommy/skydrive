@@ -24,11 +24,11 @@ with open(os.path.join(PATH,"config/pass")) as passfile:
     
     
     app.secret_key = (pw+str(len(pw)))
-    print(app.secret_key)
+    #print(app.secret_key)
     hashed_password = generate_password_hash(pw)
 
 
-print("PATH:  ",PATH)
+
 def load_settings():
     
     with open(os.path.join(PATH,"config/settings.json")) as jf:
@@ -93,14 +93,12 @@ def login():
 #call to get file list
 @app.route('/files', methods=['GET'])
 def list_files():
-    print("/files areg")
-    print(request.args)
 
     if(request.args['path']):
-        print("/files call with path")
+        #print("/files call with path")
         return jsonify(file_handler.get_file_list(request.args['path']))
     else:
-        print("/files call without path")
+        #print("/files call without path")
         return jsonify(file_handler.get_file_list())
 
 #call to get file details
@@ -110,10 +108,8 @@ def get_file_info():
     filename = request.args['name']
     filename_full = request.args['fullname']
     path = request.args['path']
-    print("reqg args below")
-    print(request.args)
-
-    print(f"debug path: {urllib.parse.unquote(path)}/{filename_full}")
+    
+    #print(f"debug path: {urllib.parse.unquote(path)}/{filename_full}")
     try:
         file_info = file_handler.get_file_info(inode, filename,filename_full,urllib.parse.unquote(path))
         
@@ -125,7 +121,6 @@ def get_file_info():
 #call to download file
 @app.route('/download/<path:filename>', methods=['GET'])
 def download_file(filename):
-    print("Routes - df: ", filename)
     return file_handler.download_file(filename)
 
 #call to delete a file
@@ -142,7 +137,6 @@ def delete_file(filename):
 #call to delete multiple files
 @app.route('/delete-multi/', methods=['DELETE'])
 def delete_multiple_files():
-    print("del multi call routes")
     deleteList = request.get_json()["files"]
     
     try:
@@ -192,13 +186,11 @@ def upload_to_device():
 def preview_file():
     filename = request.args['name']
     path = request.args['path']
-    print(f"pf: {request.args}")
     resp = make_response(file_handler.preview_file(filename,path))
     resp.headers['Content-Disposition'] = 'inline'
     return resp
 
 #settings/help page
-#home
 @app.route("/settings", methods=['GET','POST'])
 def settings():
     print(session.get('authenticated'))
@@ -209,11 +201,7 @@ def settings():
 
     print("req ",request.form)
 
-
-
-
     #power settings pressed check
-
     if(request.form.get('settings-power-restart') == 'restart'):
         print('restarting')
         os.system("sudo reboot")
@@ -232,14 +220,6 @@ def settings():
     bytes_available = int(storage_array[1]) * 1000
     bytes_total = bytes_available + bytes_used
 
-    print(bytes_total)
-    
-    print(storage_array)
-        
-
-    
-
-    
     return render_template("settings.html",cpuTemp = cpu_temp, gpuTemp = gpu_temp, usedBytes=size(int(storage_array[0]) * 1000),totalBytes=size(int(bytes_total)),usagePercent=round((bytes_used/bytes_total)* 100,2))
 
 @app.route("/get_bat_info", methods=['GET'])
@@ -300,12 +280,7 @@ def set_settings():
         else:
             print("disconnecting ap and reconncecting to previous network at wlan0")
             subprocess.run(["sudo","nmcli","device","disconnect","wlan0","&","sudo","nmcli","device","up","wlan0","&","sudo","reboot","now"], check=True)
-            
 
-            
-
-        
-        
     response_data = {
         "pcie-gen3-mode": 'pcieMode' in request.form and request.form.get('pcieMode') == 'true',
         "require-pass": 'passMode' in request.form and request.form.get('passMode') == 'true',
@@ -313,8 +288,6 @@ def set_settings():
     }
     return jsonify(response_data)
     
-
-
 #home
 @app.route("/", methods=['GET'])
 def index():
@@ -322,6 +295,5 @@ def index():
         if not session.get('authenticated'):
             return redirect(url_for('login'))
         
-
     files = file_handler.get_file_list()
     return render_template("index.html", file_list=files)

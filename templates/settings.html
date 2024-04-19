@@ -192,8 +192,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-         
+
                 var capacity = data['capacity']; 
                 var batIconIndex = 0
 
@@ -226,7 +225,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                
                 var toggleSwitchPcie = document.getElementById('pcie_toggle_switch');
                 var toggleSwitchPass = document.getElementById('use_password_toggle_switch');
                 var toggleSwitchWifiMode = document.getElementById('network_mode_toggle_switch');

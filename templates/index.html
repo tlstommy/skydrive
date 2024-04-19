@@ -44,10 +44,10 @@
         <div class="flex-container flex-item">
             <div class="p-8 w-full md:flex-1">
 
+                <h3 class='font-bold'>File Filter/Search</h3>
 
-
-                <div class="mb-4">
-                    <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
+                <div class="mb-2">
+                    <input class="border-2 w-full p-2 mb-4" placeholder="Enter a seach term..." type="search">
 
                 </div>
                 <div class="flex flex-col w-full">
@@ -84,7 +84,7 @@
 
                 </div>
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
-                    <div class="py-4">
+                    <div class="pt-4">
 
                         <label id="upload-files-label" class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
@@ -103,7 +103,7 @@
                 </form>
                 <form method="post" enctype=multipart/form-data id="file-upload-form"
                     class="multi-files-options-section">
-                    <div class="py-4">
+                    <div>
 
                         <label class="selected-files-label block mb-2 text-sm font-medium" for="multiple_files">
                             Selected file(s):
@@ -205,7 +205,6 @@
 
         }
         document.addEventListener('DOMContentLoaded', (event) => {
-            console.log('DOM fully loaded and parsed');
             updateBatteryInfo();
         });
 
@@ -231,9 +230,6 @@
         function updateFileDetailsPreview(fileDetails, path) {
             console.log(fileDetails);
 
-            // fix the bug here!!!
-
-
             if (fileDetails.is_dir) {
                 
                 loadFileList('', fileDetails.path)
@@ -254,14 +250,11 @@
             optionsButtons.style.display = 'block';
 
             const downloadLink = document.querySelector('.file-details-section #downloadButton');
-            console.log(currentPath)
-            console.log(fileDetails)
+            
 
             const fullName = currentPath +  "/" + fileDetails.filename 
             
-            console.log(`/download/${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
             const filename = (`${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
-            console.log(filename)
             downloadLink.href = (`/download/${filename}`);
             
         }
@@ -272,8 +265,6 @@
             console.log("Delete")
 
             const payload = { files: selectedFiles.map(file => file.fullname) };
-
-            console.log(typeof (payload))
 
             //loop through and call a delete request on each file
             for (file of payload.files) {
@@ -323,7 +314,6 @@
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
-                    console.log("file downloaded")
                     fetch('/download-multi-cleanup/', {
                         method: 'POST',
                         headers: {
@@ -342,7 +332,9 @@
         document.getElementById('deleteButton').addEventListener('click', function () {
             const fileDetails = individualFile;
             console.log("Delete")
-            console.log(fileDetails)
+
+            const filename = (`${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
+
             fetch(`/delete/${fileDetails.fullname}`, { method: 'DELETE' })
                 .then(response => response.json())
                 .then(data => {
@@ -366,7 +358,6 @@
 
 
         function updateSingleSelect(row) {
-            console.log(row);
             const fileName = row.querySelector(".file-name-col")?.textContent;
             const fileNameFull = row.querySelector(".file-name-col")?.title;
             const fileSize = row.querySelector(".file-size-col")?.textContent;
@@ -375,7 +366,6 @@
             const filePath = row.dataset.path;
             const fileDetails = { inode: fileInode, name: fileName, fullname: fileNameFull, size: fileSize, lastModified: fileLastMod, path: currentPath };
             individualFile = fileDetails;
-            console.log(individualFile);
         }
 
         function updateSelectedFiles(row, isChecked) {
@@ -417,18 +407,18 @@
         }
 
         //file searchterm
-        document.querySelector('[placeholder="File filter/search"]').addEventListener('input', function (e) {
+        document.querySelector('[placeholder="Enter a seach term..."]').addEventListener('input', function (e) {
             const searchTerm = this.value.toLowerCase();
             loadFileList(searchTerm);
         });
 
 
         function loadFileList(searchTerm = '', newPath = '') {
-            console.log(newPath)
+            
             if (newPath !== '') currentPath = newPath;
-            console.log("current path: " + currentPath)
+            
             const pathToLoad = newPath !== '' ? newPath : currentPath;
-            console.log(pathToLoad)
+           
             //only show the back button when nessecary
             const pathDepth = (currentPath.split('/').filter(Boolean).length - 3);
             if (pathDepth > 0) {
@@ -444,7 +434,7 @@
                     const fileListElement = document.getElementById('fileList');
                     fileListElement.innerHTML = '';
 
-                    console.log(pathToLoad)
+                    
                     const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
 
                     //sort to bring directories to the top and put reg files at the bottom
@@ -459,7 +449,6 @@
                     });
 
 
-                    console.log(filteredFiles)
                     filteredFiles.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
@@ -505,13 +494,10 @@
 
             const fileType = fileDetails.filetype.toLowerCase();
             const filePreviewIframe = document.getElementById('file-preview-iframe');
-            console.log(fileDetails)
-            console.log(fileId)
-            console.log(path)
+
             //the URL to the backend route that serves the file preview
             const filePreviewUrl = `/preview-file?name=${fileId}&path=${decodeURIComponent(path)}`;
             // Set the iframe source to the file preview URL
-
             filePreviewIframe.src = filePreviewUrl;
 
 
@@ -601,8 +587,6 @@
                     this.querySelectorAll('tr').forEach(row => row.classList.remove('selected-single'));
                     targetRow.classList.add('selected-single');
                     updateSingleSelect(targetRow);
-                    console.log(individualFile)
-                    console.log(individualFile.fileNameFull)
 
                     getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname, individualFile.path);
 

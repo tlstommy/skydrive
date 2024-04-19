@@ -25,9 +25,6 @@ class FileHandler:
 
     #get list of the files
     def get_file_list(self, relative_path=""):
-        
-        print("fp part1: ",self.device_files_folder)
-        print("fp part2: ",relative_path)
 
         relative_path = relative_path.replace(self.device_files_folder,"")
         
@@ -35,7 +32,6 @@ class FileHandler:
         
         # If the path is a file, get the directory
         if os.path.isfile(path):
-            print("is path!!!")
             path = os.path.dirname(path)
 
         print("Directory path: ", path)
@@ -75,25 +71,21 @@ class FileHandler:
             path = os.path.join(path,filename_full)
 
         filename = filename_full
-        print("\nStat: ",stat)
-
+        
         # check if the files match
         if(stat.st_ino != inode):
             print('ERROR! file mismatch.')
         
-        print(f'Filename: {filename}')
-        print(f'Inode: {stat.st_ino}')
-        print(f'Size: {stat.st_size} bytes')
-        print(f'Permissions: {oct(stat.st_mode)}')
-        print(f'Last modified: {stat.st_mtime}')
+        #print(f'Filename: {filename}')
+        #print(f'Inode: {stat.st_ino}')
+        #print(f'Size: {stat.st_size} bytes')
+        #print(f'Permissions: {oct(stat.st_mode)}')
+        #print(f'Last modified: {stat.st_mtime}')
 
 
         #check if its a dir
         is_directory = os.path.isdir(os.path.join(self.device_files_folder,filename_full))
-        print("is dir?: " , is_directory)
-
         
-
         filename,filetype = os.path.splitext(filename)
 
         file_details_dict = {
@@ -107,21 +99,14 @@ class FileHandler:
             'path':str(os.path.join(self.device_files_folder,filename_full))
         }
 
-        print(file_details_dict)
-
         return file_details_dict
 
     #download a single file
     def download_file(self, filename):
-        print('Download single file run')
-    
-        
+
         head, tail = os.path.split(filename)
         secure_tail = secure_filename(tail)
         secure_path = os.path.join(head, secure_tail)
-
-        print("Directory:", self.device_files_folder)
-        print("Secure path:", secure_path)
 
         return send_from_directory(directory=self.device_files_folder, path=secure_path, as_attachment=True)
         
@@ -132,11 +117,9 @@ class FileHandler:
         os.remove(zipfile_path)
 
     def download_multiple_files(self,files):
-        print('download multi call')
-
+        
         zipfile_name = 'downloaded_files.zip'
         zipfile_path = os.path.join(self.device_files_folder, zipfile_name)
-
 
         #make a zip of the selected files
         with zipfile.ZipFile(zipfile_path, 'w') as zipf:
@@ -185,23 +168,19 @@ class FileHandler:
 
     #preview files
     def preview_file(self,filename,path):
-        print("filename: ",filename)
-        print("filepath: ",path)
+        
         if(path == '/'):
             path = ''
         
-        print("filenametest1=",filename)
+        
         filename = os.path.join(path,filename)
-        print("filenametest2=",filename)
-        print("fp: ",filename.replace("/mnt/nvme/data/",""))
+        
         filename = filename.replace("/mnt/nvme/data/","")
         valid_application_types = ['pdf','pdf']
         filename =(filename)
         
         filetype,encoding = mimetypes.guess_type(filename)
-        print(filetype)
-        print(encoding)
-        print(type(encoding))
+        
         #unsupported mimetype
         if(filetype == None and encoding == None):
             return f"Unable to preview file, {filename}."
@@ -210,14 +189,9 @@ class FileHandler:
             if(filetype.split("/")[1] not in valid_application_types):
                 return f"Unable to preview file, {filename}."
         
-        print(filename.split('.')[-1])
-        print(self.device_files_folder)
-        print(filename)
-        print(f'{self.device_files_folder}/{filename}')
-        print(f'preview file ran, {filename}')
 
         split_dir = os.path.join(self.device_files_folder,filename).rsplit(os.path.sep,1)
-        print(split_dir)
+        
 
 
         return send_from_directory(directory=split_dir[0], path=split_dir[1],as_attachment=False)
