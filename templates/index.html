@@ -421,7 +421,7 @@
             const pathToLoad = newPath !== '' ? newPath : currentPath;
             console.log(pathToLoad)
             //only show the back button when nessecary
-            const pathDepth = currentPath.split('/').filter(Boolean).length;
+            const pathDepth = (currentPath.split('/').filter(Boolean).length - 3);
             if (pathDepth > 0) {
                 document.getElementById('backButton').style.display = 'block';
             } else {
@@ -540,7 +540,7 @@
             const pathArray = currentPath.split('/').filter(Boolean);
             console.log('patharray len:', pathArray.length)
             //if at the root
-            if (pathArray.length === 0) {
+            if ((pathArray.length-3) === 0) {
                 console.warn('Already at the root directory. Cannot go back further.');
                 alert('You are at the root directory. Cannot go back further.');
                 return;

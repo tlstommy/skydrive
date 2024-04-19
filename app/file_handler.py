@@ -183,7 +183,7 @@ class FileHandler:
             path = ''
         
         print("filenametest1=",filename)
-        filename = os.path.normpath(os.path.relpath(os.path.join(path,filename)))
+        filename = os.path.join(path,filename)
         print("filenametest2=",filename)
         print("fp: ",filename.replace("/mnt/nvme/data/",""))
         filename = filename.replace("/mnt/nvme/data/","")
