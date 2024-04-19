@@ -25,10 +25,17 @@ class FileHandler:
 
     #get list of the files
     def get_file_list(self, relative_path=""):
+        
+        print("fp part1: ",self.device_files_folder)
+        print("fp part2: ",relative_path)
+
+        relative_path = relative_path.replace(self.device_files_folder,"")
+        
         path = os.path.join(self.device_files_folder, relative_path.strip("/"))
         
         # If the path is a file, get the directory
         if os.path.isfile(path):
+            print("is path!!!")
             path = os.path.dirname(path)
 
         print("Directory path: ", path)
@@ -175,9 +182,11 @@ class FileHandler:
         if(path == '/'):
             path = ''
         
+        print("filenametest1=",filename)
         filename = os.path.normpath(os.path.relpath(os.path.join(path,filename)))
-        print("fp: ",filename.replace("device-files/",""))
-        filename = filename.replace("device-files/","")
+        print("filenametest2=",filename)
+        print("fp: ",filename.replace("/mnt/nvme/data/",""))
+        filename = filename.replace("/mnt/nvme/data/","")
         valid_application_types = ['pdf','pdf']
         filename =(filename)
         

@@ -181,8 +181,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-         
+
                 var capacity = data['capacity']; 
                 var batIconIndex = 0
 
@@ -212,7 +211,7 @@
 
         function getFileDetails(inode, name, fullname) {
             const path = encodeURIComponent(currentPath);
-            console.log("file details path: " + path)
+            console.log("file details path: " + currentPath)
             fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}&path=${encodeURIComponent(path)}`)
                 .then(response => response.json())
                 .then(fileDetails => {
@@ -236,7 +235,7 @@
 
 
             if (fileDetails.is_dir) {
-
+                
                 loadFileList('', fileDetails.path)
             }
 
@@ -420,7 +419,7 @@
             if (newPath !== '') currentPath = newPath;
             console.log("current path: " + currentPath)
             const pathToLoad = newPath !== '' ? newPath : currentPath;
-
+            console.log(pathToLoad)
             //only show the back button when nessecary
             const pathDepth = currentPath.split('/').filter(Boolean).length;
             if (pathDepth > 0) {
@@ -436,6 +435,7 @@
                     const fileListElement = document.getElementById('fileList');
                     fileListElement.innerHTML = '';
 
+                    console.log(pathToLoad)
                     const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
 
                     //sort to bring directories to the top and put reg files at the bottom
@@ -538,7 +538,7 @@
         function goBackUpDir() {
             console.log('go back. Current path:', currentPath);
             const pathArray = currentPath.split('/').filter(Boolean);
-
+            console.log('patharray len:', pathArray.length)
             //if at the root
             if (pathArray.length === 0) {
                 console.warn('Already at the root directory. Cannot go back further.');

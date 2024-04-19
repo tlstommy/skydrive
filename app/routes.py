@@ -97,8 +97,10 @@ def list_files():
     print(request.args)
 
     if(request.args['path']):
+        print("/files call with path")
         return jsonify(file_handler.get_file_list(request.args['path']))
     else:
+        print("/files call without path")
         return jsonify(file_handler.get_file_list())
 
 #call to get file details
