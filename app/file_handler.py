@@ -113,9 +113,17 @@ class FileHandler:
 
     #download a single file
     def download_file(self, filename):
-        print('download single file run')
-        filename = secure_filename(filename)
-        return send_from_directory(directory=self.device_files_folder, path=filename, as_attachment=True)
+        print('Download single file run')
+    
+        
+        head, tail = os.path.split(filename)
+        secure_tail = secure_filename(tail)
+        secure_path = os.path.join(head, secure_tail)
+
+        print("Directory:", self.device_files_folder)
+        print("Secure path:", secure_path)
+
+        return send_from_directory(directory=self.device_files_folder, path=secure_path, as_attachment=True)
         
     #download multiple files
     def download_multiple_files_cleanup(self):

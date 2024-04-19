@@ -254,7 +254,16 @@
             optionsButtons.style.display = 'block';
 
             const downloadLink = document.querySelector('.file-details-section #downloadButton');
-            downloadLink.href = `/download/${fileDetails.filename}${fileDetails.filetype}`;
+            console.log(currentPath)
+            console.log(fileDetails)
+
+            const fullName = currentPath +  "/" + fileDetails.filename 
+            
+            console.log(`/download/${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
+            const filename = (`${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
+            console.log(filename)
+            downloadLink.href = (`/download/${filename}`);
+            
         }
 
         //delete multiple files

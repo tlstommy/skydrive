@@ -123,8 +123,9 @@ def get_file_info():
         return jsonify({"error": str(e)}), 400
 
 #call to download file
-@app.route('/download/<filename>', methods=['GET'])
+@app.route('/download/<path:filename>', methods=['GET'])
 def download_file(filename):
+    print("Routes - df: ", filename)
     return file_handler.download_file(filename)
 
 #call to delete a file
