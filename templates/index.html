@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/theme.css')}}">
     <title>SkyDrive</title>
     <style>
-        body {background-color: #0d1118;}
+        body {
+            background-color: #0d1118;
+        }
     </style>
 </head>
 
@@ -18,29 +20,48 @@
         <header class="border-b-2 p-4">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold">SkyDrive</h1>
-                <a class="text-xl font-bold pr-4" href="/settings">Settings</a>
+                <div class="flex items-center space-x-4">
+                    <p class="nav-link text-xl font-bold pl-4 pr-4" id="bat-info-svg" title="Battery Charge">
+                        <p class="nav-link text-xs" id="batt-charge-percent">
+                        </p>
+                    </p>
+                    <a class="nav-link text-xl font-bold  mx-4 rounded flex items-center" title="SkyDrive Settings" href="/settings">
+                        <svg class="settings-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" >
+                            <path fill="white" d="M24 14.187v-4.374c-2.148-.766-2.726-.802-3.027-1.529-.303-.729.083-1.169 1.059-3.223l-3.093-3.093c-2.026.963-2.488 1.364-3.224 1.059-.727-.302-.768-.889-1.527-3.027h-4.375c-.764 2.144-.8 2.725-1.529 3.027-.752.313-1.203-.1-3.223-1.059l-3.093 3.093c.977 2.055 1.362 2.493 1.059 3.224-.302.727-.881.764-3.027 1.528v4.375c2.139.76 2.725.8 3.027 1.528.304.734-.081 1.167-1.059 3.223l3.093 3.093c1.999-.95 2.47-1.373 3.223-1.059.728.302.764.88 1.529 3.027h4.374c.758-2.131.799-2.723 1.537-3.031.745-.308 1.186.099 3.215 1.062l3.093-3.093c-.975-2.05-1.362-2.492-1.059-3.223.3-.726.88-.763 3.027-1.528zm-4.875.764c-.577 1.394-.068 2.458.488 3.578l-1.084 1.084c-1.093-.543-2.161-1.076-3.573-.49-1.396.581-1.79 1.693-2.188 2.877h-1.534c-.398-1.185-.791-2.297-2.183-2.875-1.419-.588-2.507-.045-3.579.488l-1.083-1.084c.557-1.118 1.066-2.18.487-3.58-.579-1.391-1.691-1.784-2.876-2.182v-1.533c1.185-.398 2.297-.791 2.875-2.184.578-1.394.068-2.459-.488-3.579l1.084-1.084c1.082.538 2.162 1.077 3.58.488 1.392-.577 1.785-1.69 2.183-2.875h1.534c.398 1.185.792 2.297 2.184 2.875 1.419.588 2.506.045 3.579-.488l1.084 1.084c-.556 1.121-1.065 2.187-.488 3.58.577 1.391 1.689 1.784 2.875 2.183v1.534c-1.188.398-2.302.791-2.877 2.183zm-7.125-5.951c1.654 0 3 1.346 3 3s-1.346 3-3 3-3-1.346-3-3 1.346-3 3-3zm0-2c-2.762 0-5 2.238-5 5s2.238 5 5 5 5-2.238 5-5-2.238-5-5-5z" />
+                        </svg>
+                    </a>
+                    <p class="nav-link pr-4">&nbsp;</p>
+                    <a class="nav-link text-xl font-bold pr-4 mx-4 rounded flex items-center" href="https://github.com/tlstommy/skydrive" title="Github Repo">
+                        <svg class="github-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 16 16">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                        </svg>
+                    </a>
+
+                </div>
+
             </div>
         </header>
         <div class="flex-container flex-item">
             <div class="p-8 w-full md:flex-1">
 
-                
+
 
                 <div class="mb-4">
                     <input class="border-2 w-full p-2 mb-4" placeholder="File filter/search" type="search">
-                    
+
                 </div>
                 <div class="flex flex-col w-full">
 
 
                     <p class="font-semibold mb-4">Files On Device</p>
                     <button id="backButton" class=" p-2 mb-2" style="width: fit-content;display: none;">
-                        
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            
+                            <path d="M6 12H18M6 12L11 7M6 12L11 17" stroke="#ffffff" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+
                         </svg>
-                        
+
                     </button>
                     <!-- Scrollable table body -->
                     <div class="scrollable-table-body">
@@ -49,7 +70,7 @@
                                 <tr id="tableheader-head">
                                     <th class="px-4 py-2 w-2"><input type="checkbox"
                                             class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
-                                    
+
                                     <th class="py-2 w-1/2">Name</th>
                                     <th class="py-2 w-1/6">File Size</th>
                                     <th class="py-2 w-1/4">Last Modified</th>
@@ -64,27 +85,27 @@
                 </div>
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
                     <div class="py-4">
-                                             
+
                         <label id="upload-files-label" class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
                         </label>
-                            <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
-                                <div id="upload-progress-bar" style="height: 24px; background-color: #328f36; width: 0%;white-space: pre;"></div>
-                                
-                            </div>    
+                        <div id="upload-progress-container" style="display: none; width: 100%; background-color: #333;">
+                            <div id="upload-progress-bar"
+                                style="height: 24px; background-color: #328f36; width: 0%;white-space: pre;"></div>
+
+                        </div>
                         <input
                             class="block w-full p-2 text-sm border border-gray-300 rounded-lg cursor-pointer  focus:outline-none"
                             id="multiple_files" type="file" name="file" multiple>
-                        <button class="border-2 p-2 mt-2 mr-4" id="uploadButton"
-                            type="submit" name="upload-files" value="Upload Files">Upload Files To Device</button>
+                        <button class="border-2 p-2 mt-2 mr-4" id="uploadButton" type="submit" name="upload-files"
+                            value="Upload Files">Upload Files To Device</button>
                     </div>
                 </form>
                 <form method="post" enctype=multipart/form-data id="file-upload-form"
                     class="multi-files-options-section">
                     <div class="py-4">
 
-                        <label class="selected-files-label block mb-2 text-sm font-medium"
-                            for="multiple_files">
+                        <label class="selected-files-label block mb-2 text-sm font-medium" for="multiple_files">
                             Selected file(s):
                         </label>
 
@@ -106,13 +127,14 @@
                 <h3 class='font-bold'>File Details</h3>
                 <br>
                 <div id="file-preview-box" class="flex justify-center items-center overflow-hidden h-96 ">
-                    <iframe id="file-preview-iframe" class="flex justify-center items-center " width="100%" height="100%" src="" ></iframe>
+                    <iframe id="file-preview-iframe" class="flex justify-center items-center " width="100%"
+                        height="100%" src=""></iframe>
 
                 </div>
                 <div class="file-info">
                     <!-- File details will be inserted here -->
                 </div>
-                
+
 
                 <div class="file-options-buttons">
 
@@ -122,10 +144,10 @@
                     <button id="deleteButton" class="border-2 p-2 mt-2 bg-gray-50 hover:bg-red">Delete File</button>
                 </div>
 
-                
+
             </div>
 
-           
+
         </div>
     </div>
 
@@ -134,18 +156,72 @@
         var individualFile = ""; //for single file selection
         let currentPath = ''; //current directory path
 
+        //for nav
+        const batterySvgs = [
+            //full
+            `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-battery-full" viewBox="0 0 16 16">
+                <path d="M2 6h10v4H2z"/>
+                <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8"/>
+            </svg>`,
+            //half
+            `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-battery-half" viewBox="0 0 16 16">
+                <path d="M2 6h5v4H2z"/>
+                <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8"/>
+            </svg>`,
+            //low
+            `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-battery" viewBox="0 0 16 16">
+                <path d="M0 6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1zm14 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8"/>
+            </svg>`,
+        ]
+
+        function updateBatteryInfo() {
+
+            fetch('/get_bat_info', {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+         
+                var capacity = data['capacity']; 
+                var batIconIndex = 0
+
+                if(parseInt(capacity) >= 60){
+                    batIconIndex = 0;
+                }else if(parseInt(capacity) < 60 && parseInt(capacity) > 20){
+                    batIconIndex = 1;
+                }else{
+                    batIconIndex = 0;
+                }
+
+    
+                const batInfoLink = document.getElementById('bat-info-svg'); 
+                batInfoLink.innerHTML = data['capacity'] + "% &nbsp; " + batterySvgs[batIconIndex]; // Set charge and SVG
+                
+                
+            })
+            .catch(error => {
+                console.error('Error fetching bat info:', error);
+            });
+
+        }
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log('DOM fully loaded and parsed');
+            updateBatteryInfo();
+        });
+
         function getFileDetails(inode, name, fullname) {
             const path = encodeURIComponent(currentPath);
             console.log("file details path: " + path)
             fetch(`/get-file-details?inode=${inode}&name=${name}&fullname=${fullname}&path=${encodeURIComponent(path)}`)
                 .then(response => response.json())
                 .then(fileDetails => {
-                    if(fileDetails.is_dir){
+                    if (fileDetails.is_dir) {
                         currentPath = fileDetails.path; // Only update if it's a directory
-                        loadFileList('',fileDetails.path)
+                        loadFileList('', fileDetails.path)
                     }
-                    
-                    updateFileDetailsPreview(fileDetails,path);
+
+                    updateFileDetailsPreview(fileDetails, path);
                 })
                 .catch(error => {
                     console.error('Error fetching file details:', error);
@@ -153,18 +229,18 @@
         }
 
 
-        function updateFileDetailsPreview(fileDetails,path) {
+        function updateFileDetailsPreview(fileDetails, path) {
             console.log(fileDetails);
 
             // fix the bug here!!!
-            
-            
-            if(fileDetails.is_dir){
-                
-                loadFileList('',fileDetails.path)
+
+
+            if (fileDetails.is_dir) {
+
+                loadFileList('', fileDetails.path)
             }
 
-            
+
             const fileDetailsInfo = document.querySelector('.file-details-section .file-info');
             fileDetailsInfo.innerHTML = `
             <p>Filename: ${fileDetails.filename}</p>
@@ -172,9 +248,9 @@
             <p>Size: ${fileDetails.size}</p>
             <p>Last Modified: ${fileDetails.last_modified}</p>
             `;
-            
-    
-            previewFile(fileDetails.fileID,fileDetails,path);
+
+
+            previewFile(fileDetails.fileID, fileDetails, path);
             const optionsButtons = document.querySelector('.file-details-section .file-options-buttons');
             optionsButtons.style.display = 'block';
 
@@ -235,7 +311,7 @@
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = 'downloaded_files.zip'; 
+                    a.download = 'downloaded_files.zip';
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
@@ -333,11 +409,11 @@
         }
 
         //file searchterm
-        document.querySelector('[placeholder="File filter/search"]').addEventListener('input', function(e) {
+        document.querySelector('[placeholder="File filter/search"]').addEventListener('input', function (e) {
             const searchTerm = this.value.toLowerCase();
             loadFileList(searchTerm);
         });
-        
+
 
         function loadFileList(searchTerm = '', newPath = '') {
             console.log(newPath)
@@ -347,9 +423,9 @@
 
             //only show the back button when nessecary
             const pathDepth = currentPath.split('/').filter(Boolean).length;
-            if(pathDepth > 0){
+            if (pathDepth > 0) {
                 document.getElementById('backButton').style.display = 'block';
-            }else{
+            } else {
                 document.getElementById('backButton').style.display = 'none';
             }
 
@@ -359,18 +435,18 @@
                 .then(files => {
                     const fileListElement = document.getElementById('fileList');
                     fileListElement.innerHTML = '';
-                    
+
                     const filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchTerm));
-                    
+
                     //sort to bring directories to the top and put reg files at the bottom
                     filteredFiles.sort((a, b) => {
-                    if (a.is_directory && !b.is_directory) {
-                        return -1; //a  is a dir so its before b
-                    } else if (!a.is_directory && b.is_directory) {
-                        return 1; // b  isnt a dir so its after b
-                    } else {
-                        return 0; // keep original order
-                    }
+                        if (a.is_directory && !b.is_directory) {
+                            return -1; //a  is a dir so its before b
+                        } else if (!a.is_directory && b.is_directory) {
+                            return 1; // b  isnt a dir so its after b
+                        } else {
+                            return 0; // keep original order
+                        }
                     });
 
 
@@ -378,22 +454,22 @@
                     filteredFiles.forEach(file => {
                         const row = document.createElement('tr');
                         row.dataset.inode = file.inode;
-                        
-                        if(file.is_directory){
+
+                        if (file.is_directory) {
                             row.innerHTML = `
                                 <th class="px-4 py-2 w-2 filelist-checkbox folder">
                                     <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill=#a1a1ff viewBox="0 0 24 24">
                                         <path fill-rule="evenodd" d="M5 4a2 2 0 0 0-2 2v1h10.968l-1.9-2.28A2 2 0 0 0 10.532 4H5ZM3 19V9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm11.707-7.707a1 1 0 0 0-1.414 1.414l.293.293H8a1 1 0 1 0 0 2h5.586l-.293.293a1 1 0 0 0 1.414 1.414l2-2a1 1 0 0 0 0-1.414l-2-2Z" clip-rule="evenodd"/>
                                         </svg>
                                 </th>
-                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
+                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
                                 <td class="file-size-col py-2 w-1/6">${file.size}</td>
                                 <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
                             `;
-                        }else{
+                        } else {
                             row.innerHTML = `
                                 <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
-                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0,29) + "..." : file.name}</td>
+                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
                                 <td class="file-size-col py-2 w-1/6">${file.size}</td>
                                 <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
                             `;
@@ -403,7 +479,7 @@
                         if (file.is_directory) {
                             row.addEventListener('click', () => {
                                 const dirPath = `${currentPath}/${file.name}`;
-                                console.log('Directory clicked, new path:', dirPath); 
+                                console.log('Directory clicked, new path:', dirPath);
                                 loadFileList('', dirPath);
                             });
                         }
@@ -416,7 +492,7 @@
         }
 
         //file preview func
-        function previewFile(fileId,fileDetails,path) {
+        function previewFile(fileId, fileDetails, path) {
 
             const fileType = fileDetails.filetype.toLowerCase();
             const filePreviewIframe = document.getElementById('file-preview-iframe');
@@ -428,17 +504,17 @@
             // Set the iframe source to the file preview URL
 
             filePreviewIframe.src = filePreviewUrl;
-            
-            
+
+
         }
 
 
         //adjust sizing of preview content upon iframe loads
-        document.getElementById('file-preview-iframe').onload = function() {
+        document.getElementById('file-preview-iframe').onload = function () {
             //get iframe
             const iframe = document.getElementById('file-preview-iframe');
             try {
-                
+
                 var iframeContent = iframe.contentDocument || iframe.contentWindow.document;
                 //add css
                 iframeContent.body.style.margin = "0";
@@ -446,7 +522,7 @@
                 iframeContent.body.style.display = "flex";
                 iframeContent.body.style.justifyContent = "center";
                 iframeContent.body.style.alignItems = "center";
-                
+
                 //add styling to images in the iframe so they arent zoomed in
                 var imgs = iframeContent.getElementsByTagName('img');
                 for (var i = 0; i < imgs.length; i++) {
@@ -458,7 +534,7 @@
                 console.error("Error adjusting iframe content: ", e);
             }
         };
-  
+
         function goBackUpDir() {
             console.log('go back. Current path:', currentPath);
             const pathArray = currentPath.split('/').filter(Boolean);
@@ -492,6 +568,10 @@
 
         //on page load
         window.onload = function () {
+            //get batt info
+            updateBatteryInfo()
+            
+            
             loadFileList(); // Initial file list load
 
             document.getElementById('filelist-check-all').addEventListener('change', function () {
@@ -514,8 +594,8 @@
                     updateSingleSelect(targetRow);
                     console.log(individualFile)
                     console.log(individualFile.fileNameFull)
-                    
-                    getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname,individualFile.path);
+
+                    getFileDetails(individualFile.inode, individualFile.name, individualFile.fullname, individualFile.path);
 
                 }
             });
@@ -525,11 +605,11 @@
             document.getElementById('uploadButton').addEventListener('click', function (event) {
                 event.preventDefault();
                 var formData = new FormData(document.getElementById('file-upload-form'));
-                
+
                 //progress bar
                 document.getElementById('upload-files-label').style.display = 'none';
                 document.getElementById('upload-progress-container').style.display = 'block';
-                
+
                 var xhr = new XMLHttpRequest();
                 xhr.open('POST', '/upload', true);
 
@@ -537,27 +617,27 @@
                 var uploadStartTime = new Date().getTime();
 
 
-                xhr.upload.onprogress = function(e) {
-                    
+                xhr.upload.onprogress = function (e) {
+
                     if (e.lengthComputable) {
 
-                        var currentTime = new Date().getTime(); 
+                        var currentTime = new Date().getTime();
                         var timeDelta = (currentTime - uploadStartTime) / 1000; //delta t in seconds
                         var speed = e.loaded / timeDelta; // Calculate the upload speed
-                        
+
                         var percentage = (e.loaded / e.total) * 100;//percent downloaded
 
 
                         document.getElementById('upload-progress-bar').style.width = percentage + '%';
-                        
-                        
+
+
                         //Format upload speed with the proper units
                         var speedText;
-                        if(speed > 1024 * 1024) {
+                        if (speed > 1024 * 1024) {
                             speedText = (speed / (1024 * 1024)).toFixed(2) + ' MB/s';
-                        }else if (speed > 1024) {
+                        } else if (speed > 1024) {
                             speedText = (speed / 1024).toFixed(2) + ' KB/s';
-                        }else{
+                        } else {
                             speedText = speed.toFixed(2) + ' B/s';
                         }
 
@@ -565,7 +645,7 @@
                     }
                 };
 
-                xhr.onload = function() {
+                xhr.onload = function () {
                     if (xhr.status === 200) {
                         // Success
                         console.log(JSON.parse(xhr.responseText));
@@ -578,17 +658,17 @@
                     }
                 };
 
-                xhr.onerror = function() {
+                xhr.onerror = function () {
                     console.error('Upload failed.');
                 };
 
                 xhr.send(formData);
-                            
-                            
-                            
+
+
+
 
             });
-            
+
         };
     </script>
 </body>

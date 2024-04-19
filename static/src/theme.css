@@ -144,7 +144,7 @@ button:hover,
 .flex-container {
   display: flex;
   flex-direction: column;
-  /* This is the default direction, so it's optional to include */
+  
 }
 
 /* md */
@@ -242,3 +242,24 @@ input:checked+.slider:before {
   /* Slightly darker header background */
 }
 
+/* nav stuff */
+
+.nav-link {
+  display: inline-flex;
+}
+
+
+/*settings icon anim*/
+.settings-icon {
+  transition: transform 3s ease-in-out;
+}
+.settings-icon:hover {
+  transform: rotate(360deg);
+  
+}
+
+.github-icon:hover {
+  transform: scale(1.1); /* Slightly enlarges the icon */
+  transition: fill 0.3s ease, transform 0.3s ease;
+  
+}
