@@ -18,15 +18,11 @@ class PowerManager:
         read = self.i2c_bus.read_word_data(self.i2c_bus_address, 2)
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         bat_voltage = (((swapped * 1.25) / 1000) / 16)
-        return bat_voltage
+        return  "%4.2f" % bat_voltage
     
     def get_battery_capacity(self):
         read = self.i2c_bus.read_word_data(self.i2c_bus_address, 4)
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         bat_cap = swapped/256
-        return bat_cap
+        return "%1i" % bat_cap
 
-
-
-
-    

@@ -239,6 +239,20 @@ def settings():
     
     return render_template("settings.html",cpuTemp = cpu_temp, gpuTemp = gpu_temp, usedBytes=size(int(storage_array[0]) * 1000),totalBytes=size(int(bytes_total)),usagePercent=round((bytes_used/bytes_total)* 100,2))
 
+@app.route("/get_bat_info", methods=['GET'])
+def get_power_info():
+
+    try:
+        return jsonify({
+            "voltage":power_manager.get_battery_voltage(),
+            "capacity":power_manager.get_battery_capacity(),
+        })
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500    
+
+
+
 @app.route("/get_settings", methods=['GET'])
 def get_settings():
     # Ensure to return a boolean value
