@@ -47,15 +47,6 @@ Upon completion, SkyDrive will start and be accessible on the web at the Raspber
 
 
 
-### Uploading, Downloading & Managing Files
-
-
-### Settings
-
-
-### SkyDrive Buttons
-
-
 # Parts List
 
 SkyDrive was designed to work with a Raspberry Pi 5 due to the fast speeds of the PCIe and WIFI adapter and should be compatible with any NVME drive connected over the Pi's PCIe lanes. 
@@ -81,10 +72,6 @@ Assembling SkyDrive is a straightforward process that can be completed in x simp
 ### Step 2: 
 
 ### Step 3: 
-
-
-
-
 
 
 # Issues & Suggestions
