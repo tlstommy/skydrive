@@ -535,21 +535,13 @@ print_success "Created logfile, skydrive.log"
 
 password_set
 
-
 setup_samba
-
-
 
 make_venv
 
 set_hostname
 
 setup_bonjour
-
-
-
-check_and_mount_nvme_drive
-
 
 node_install
 
