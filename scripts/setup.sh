@@ -173,7 +173,7 @@ setup_bonjour(){
 
 create_settings_config(){
 
-  JSON='{"pcie_gen3_mode": false,"require_pass": true,"apmode": true}'
+  JSON='{"pcie_gen3_mode": false,"require_pass": true,"apmode": false}'
   echo $JSON > $currentDir/config/settings.json
   sudo chmod -R 777 $currentDir/config/settings.json
   print_success "Configuration file created in $currentDir/config/ !"
