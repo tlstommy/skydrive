@@ -52,7 +52,7 @@
         <div class="flex-container flex-item">
             <div class="p-8 w-full md:flex-1">
 
-                <h3 class='font-bold'>Settings</h3>
+                <h3 class='text-xl font-bold'>Settings</h3>
                 <hr>
                 <form method="post" enctype=multipart/form-data id="settings-form">
                     
@@ -122,6 +122,14 @@
                                         <td>SSD Storage Space</td>
                                         <td>{{ usedBytes }} / {{ totalBytes }}  ({{ usagePercent }}%)</td>
                                     </tr>
+                                    <tr>
+                                        <td>Battery Capacity</td>
+                                        <td>{{ batCap }} %</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Battery Voltage</td>
+                                        <td>{{ batVolt }} Volts</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div> 
@@ -132,13 +140,13 @@
             </div>
 
             <div class="file-details-section p-8 w-full border-l md:flex-1">
-                <h3 class='font-bold'>Help</h3>
-                <hr>
-                <div style="margin: 2%;">
+                <h2 class='text-xl font-bold'>Help</h3>
+                <hr style="margin-right: 20%;">
+                <div style="margin-right: 25%;">
                     <p>
                         SkyDrive is a portable wireless storage device, that aims to meet the evolving data storage and accessibility needs of users in todays
                         digital world. 
-                        SkyDrive offers a convenient, secure, and reliable solution for data management and accessibility for professionals, students, individuals or anyone on the go!.
+                        SkyDrive offers a convenient, secure, and reliable solution for data management and accessibility for professionals, students, individuals or anyone on the go!
                         
                         
                     </p>
@@ -147,16 +155,39 @@
                 <br>
 
                 <b>SkyDrive network share (SMB)</b>
-                <hr>
-                <div style="margin: 2%;">
+                <hr style="margin-right: 20%;">
+                <div style="margin-right: 25%;">
                     <p>
-                        To connect to your Skydrive over SMB, map the drive at '\\skydrive\skydrive-smb' and login with the user 'pi' and your Skydrive password.
+                        To connect to your Skydrive over SMB, map the drive at '<b>\\skydrive\skydrive-smb</b>' and login with the user '<b>pi</b>' and your Skydrive password.
                         
                         
                     </p>
                 </div>
 
                 <br>
+                <b>AP (Access-point) Mode</b>
+                <hr style="margin-right: 20%;">
+                <div style="margin-right: 25%;">
+                    <p>
+                        When AP Mode is enabled from the menu to the left, Skydrive will disconnect from its currently connected wifi network and, upon restart, begin using the Raspberry Pi's onboard antennas to broadcast a network over the SSID '<b>SkyDrive</b>'. 
+                        <br><br>
+                        This network can be connected to by using the password that was specified during setup the same way it does work on network.
+                        <br><br>
+                        To disable AP mode, simply toggle it off from the settings menu.
+                        
+                        
+                    </p>
+                </div>
+
+                <br>
+                <b>Issues & Suggestions</b>
+                <hr style="margin-right: 20%;">
+                <div style="margin-right: 25%;">
+                    <p>
+                        If you encounter any issues or have any suggestions on how to improve SkyDrive, please submit them through the GitHub Issues page, <a href="https://github.com/tlstommy/skydrive/issues">here</a>.<br><br>Your feedback is greatly appreciated!
+                        
+                    </p>
+                </div>
 
                 
             </div>
@@ -201,7 +232,7 @@
                 }else if(parseInt(capacity) < 60 && parseInt(capacity) > 20){
                     batIconIndex = 1;
                 }else{
-                    batIconIndex = 0;
+                    batIconIndex = 2;
                 }
 
     

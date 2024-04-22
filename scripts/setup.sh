@@ -344,28 +344,7 @@ get_network_mode(){
   done
 }
 
-set_mode(){
-  if [[ $wifiMode == "lan" ]]; then
-    echo "Continuing with lan mode on address:"
-    hostname -I | awk '{print $1}'
-  elif [[ $wifiMode == "ap" ]]; then
-    local junk
-    clear
-    
-    #sudo nmcli device wifi hotspot ssid SkyDrive password ${password}
-    print_success "\nSkydrive Hotspot Mode enabled!"
-    print_underline "\nSkydrive Network Info:"
-    print_bold "SSID:      SkyDrive"
-    print_bold "Password:  ${password}"
-    print_bold "\nThis network will be broadcasted from the Pi and can be connected to using the login details above."
-    sleep 1
-    echo -e "\nPress ENTER to continue setup..."
-    read -s junk
-  else
-    print_error "Mode error 375!"
-    sleep 1
-  fi
-}
+
 
 #check for i2c device
 detect_i2c_device(){
@@ -548,9 +527,6 @@ create_settings_config
 check_and_mount_nvme_drive
 
 
-get_network_mode
-
-echo ${wifiMode}
 
 # Create the log file
 sudo touch "$currentWorkingDir/skydrive.log"
@@ -578,16 +554,13 @@ node_install
 
 update_rc_local
 
-set_mode
-
-
 sleep 3
 clear
 banner "SkyDrive"
 print_success "$(print_bold "SkyDrive has been successfully installed!")"
 
 print_header "Helpful Info:"
-echo "  [•] A QR code of the PiInk webUI can be brought up at any time by pressing the button labeled 'A' on the back of the PiInk display."
+echo "  [•] A"
 echo "  [•] Have an issue or suggestion? Please, submit it here!"
 echo -e "      https://github.com/tlstommy/SkyDrive/issues\n"
 

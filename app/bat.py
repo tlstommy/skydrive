@@ -28,25 +28,10 @@ bus = smbus.SMBus(1)
 
 while True:
 
- print ("******************")
- print ("Voltage:%5.2fV" % readVoltage(bus))
 
- print ("Battery:%5i%%" % readCapacity(bus))
+        print ("Voltage:",readVoltage(bus))
 
- if readCapacity(bus) == 100:
+        print ("Battery:",readCapacity(bus),"\n\n")
+        time.sleep(0.5)
 
-         print ("Battery FULL")
-
- if readCapacity(bus) < 20:
-
-         print ("Battery Low")
-
-#Set battery low voltage to shut down
- if readVoltage(bus) < 3.20:
-
-         print ("Battery LOW!!!")
-         print ("Shutdown in 5 seconds")
-         time.sleep(5)
-         #call("sudo nohup shutdown -h now", shell=True)
-
- time.sleep(2)
+ 

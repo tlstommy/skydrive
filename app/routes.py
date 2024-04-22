@@ -124,7 +124,7 @@ def download_file(filename):
     return file_handler.download_file(filename)
 
 #call to delete a file
-@app.route('/delete/<filename>', methods=['DELETE'])
+@app.route('/delete/<path:filename>', methods=['DELETE'])
 def delete_file(filename):
     try:
         file_handler.delete_file(filename)
@@ -153,6 +153,7 @@ def delete_multiple_files():
 def download_multiple_files():
     print("download multi call routes")
     fileList = request.get_json()["files"]
+    print(fileList)
     if fileList:
         try:
             #call the download_multiple_files method from FileHandler
@@ -204,12 +205,12 @@ def settings():
     #power settings pressed check
     if(request.form.get('settings-power-restart') == 'restart'):
         print('restarting')
-        os.system("sudo reboot")
+        os.system("sudo reboot now")
         
 
     if(request.form.get('settings-power-shutdown') == 'shutdown'):
         print('shutting down')
-        os.system("sudo shutdown")
+        os.system("sudo shutdown now")
         
     cpu_temp = int(subprocess.check_output('cat /sys/class/thermal/thermal_zone0/temp', shell=True, text=True))/1000  
     gpu_temp = subprocess.check_output('vcgencmd measure_temp', shell=True, text=True).replace("temp=","").replace("'C","")
@@ -220,7 +221,7 @@ def settings():
     bytes_available = int(storage_array[1]) * 1000
     bytes_total = bytes_available + bytes_used
 
-    return render_template("settings.html",cpuTemp = cpu_temp, gpuTemp = gpu_temp, usedBytes=size(int(storage_array[0]) * 1000),totalBytes=size(int(bytes_total)),usagePercent=round((bytes_used/bytes_total)* 100,2))
+    return render_template("settings.html",cpuTemp = cpu_temp, gpuTemp = gpu_temp, usedBytes=size(int(storage_array[0]) * 1000),totalBytes=size(int(bytes_total)),usagePercent=round((bytes_used/bytes_total)* 100,2),batCap=power_manager.get_battery_capacity(),batVolt=power_manager.get_battery_voltage())
 
 @app.route("/get_bat_info", methods=['GET'])
 def get_power_info():

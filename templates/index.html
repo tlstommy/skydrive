@@ -47,7 +47,7 @@
                 <h3 class='font-bold'>File Filter/Search</h3>
 
                 <div class="mb-2">
-                    <input class="border-2 w-full p-2 mb-4" placeholder="Enter a seach term..." type="search">
+                    <input class="border-2 w-full p-2 mb-4" name="Search" placeholder="Enter a seach term..." type="search">
 
                 </div>
                 <div class="flex flex-col w-full">
@@ -182,15 +182,16 @@
             .then(response => response.json())
             .then(data => {
 
+                console.log(data);
                 var capacity = data['capacity']; 
-                var batIconIndex = 0
+                
 
                 if(parseInt(capacity) >= 60){
                     batIconIndex = 0;
                 }else if(parseInt(capacity) < 60 && parseInt(capacity) > 20){
                     batIconIndex = 1;
                 }else{
-                    batIconIndex = 0;
+                    batIconIndex = 2;
                 }
 
     
@@ -201,8 +202,9 @@
             })
             .catch(error => {
                 console.error('Error fetching bat info:', error);
+                
             });
-
+            
         }
         document.addEventListener('DOMContentLoaded', (event) => {
             updateBatteryInfo();
@@ -259,42 +261,16 @@
             
         }
 
-        //delete multiple files
-        document.getElementById('deleteButtonMulti').addEventListener('click', function (event) {
-            event.preventDefault();
-            console.log("Delete")
-
-            const payload = { files: selectedFiles.map(file => file.fullname) };
-
-            //loop through and call a delete request on each file
-            for (file of payload.files) {
-                fetch(`/delete/${file}`, { method: 'DELETE' })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-
-                            const fileInfo = document.querySelector('.file-info');
-                            const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
-                            fileInfo.style.display = 'none';
-                            fileInfoButtons.style.display = 'none';
-                        } else {
-                            alert('Error deleting file: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error deleting file');
-                    });
-            }
-
-            loadFileList();
-            alert('Files deleted successfully!');
-        });
+        
 
         //download multiple files, prob better than sending a spam of requests
         document.getElementById('downloadButtonMulti').addEventListener('click', function (event) {
             event.preventDefault();
-            const payload = { files: selectedFiles.map(file => file.fullname) };
+
+            
+            
+            
+            const payload = { files: selectedFiles.map(file => (currentPath +  "/"+ file.fullname).replace('/mnt/nvme/data/','')) };
             console.log(payload)
             console.log(selectedFiles)
             fetch('/download-multi/', {
@@ -332,10 +308,11 @@
         document.getElementById('deleteButton').addEventListener('click', function () {
             const fileDetails = individualFile;
             console.log("Delete")
+            console.log(fileDetails)
+            const fullName = currentPath +  "/" + fileDetails.fullname
+            
 
-            const filename = (`${fullName.replace('/mnt/nvme/data/','')}${fileDetails.filetype}`)
-
-            fetch(`/delete/${fileDetails.fullname}`, { method: 'DELETE' })
+            fetch(`/delete/${fullName.replace('/mnt/nvme/data/','')}`, { method: 'DELETE' })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -353,6 +330,38 @@
                     console.error('Error:', error);
                     alert('Error deleting file');
                 });
+        });
+
+        //delete multiple files
+        document.getElementById('deleteButtonMulti').addEventListener('click', function (event) {
+            event.preventDefault();
+            console.log("Delete")
+
+            const payload = { files: selectedFiles.map(file => (currentPath +  "/"+ file.fullname).replace('/mnt/nvme/data/','')) };
+
+            //loop through and call a delete request on each file
+            for (file of payload.files) {
+                fetch(`/delete/${file}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+
+                            const fileInfo = document.querySelector('.file-info');
+                            const fileInfoButtons = document.querySelector('.file-details-section .file-options-buttons');
+                            fileInfo.style.display = 'none';
+                            fileInfoButtons.style.display = 'none';
+                        } else {
+                            alert('Error deleting file: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error deleting file');
+                    });
+            }
+
+            loadFileList();
+            alert('Files deleted successfully!');
         });
 
 
@@ -466,7 +475,7 @@
                             `;
                         } else {
                             row.innerHTML = `
-                                <th class="px-4 py-2 w-2"><input type="checkbox" class="filelist-checkbox h-4"></th>
+                                <th class="px-4 py-2 w-2"><input type="checkbox" name="Select File" class="filelist-checkbox h-4"></th>
                                 <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
                                 <td class="file-size-col py-2 w-1/6">${file.size}</td>
                                 <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>

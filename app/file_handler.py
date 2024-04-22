@@ -116,44 +116,72 @@ class FileHandler:
         zipfile_path = os.path.join(self.device_files_folder, zipfile_name)
         os.remove(zipfile_path)
 
-    def download_multiple_files(self,files):
+    def download_multiple_files(self, files):
         
         zipfile_name = 'downloaded_files.zip'
         zipfile_path = os.path.join(self.device_files_folder, zipfile_name)
 
-        #make a zip of the selected files
-        with zipfile.ZipFile(zipfile_path, 'w') as zipf:
+        #make zip of the selected files
+        with zipfile.ZipFile(zipfile_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
             for file in files:
+                full_path = os.path.join(self.device_files_folder, file)
                 
-                filename = secure_filename(file)
-                file_path = os.path.join(self.device_files_folder, filename)
                 
-                # Check if the file exists
-                if os.path.exists(file_path):
-                    zipf.write(file_path, arcname=filename)
+                head, tail = os.path.split(file)
+                
+                #root check
+                if head == '/':
+                    head = ''
+
+                secure_tail = secure_filename(tail)
+                secure_path = os.path.join(head, secure_tail)
+                
+                file_to_zip = os.path.join(self.device_files_folder, secure_path)
+                
+                if os.path.exists(file_to_zip):
+                    zipf.write(file_to_zip, arcname=secure_tail)
                 else:
-                    print(f'File not found: {file}')
+                    print(f'File not found: {secure_path}')
+                
 
-        sentfile = send_file(zipfile_path)
+        return send_from_directory(directory=self.device_files_folder, path=zipfile_name, as_attachment=True)
 
-        #intercept another request after this to delete the zip
-        return sentfile
+    
 
 
     #delete a single file
     def delete_file(self, filename):
-        filename = secure_filename(filename)
-        full_path = os.path.join(self.device_files_folder, filename)
-        os.remove(full_path)
+        
+        head, tail = os.path.split(filename)
+        print(head,tail)
+        secure_tail = secure_filename(tail)
+        secure_path = os.path.join(head, secure_tail)
+        print("Sec path: ",secure_path)
+        fp = os.path.join(self.device_files_folder,secure_path)
+        print(fp)
+        os.remove(fp)
 
     #del multiple files
     def delete_multiple_files(self,files):
         print('delete multi call')
         print(files)
         for file in files:
+            
+            head, tail = os.path.split(file)
+
+            print("TEST: |",head,tail)
+
             filename = secure_filename(file)
             full_path = os.path.join(self.device_files_folder, filename)
-            os.remove(full_path)
+
+
+            if os.path.exists(full_path):
+                os.remove(full_path)
+                print(f'File removed: {full_path}')
+            else:
+                print(f'File not found: {full_path}')
+        
+
 
     #upload a file/s
     def upload_files(self, files):
