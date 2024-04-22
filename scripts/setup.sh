@@ -127,6 +127,7 @@ enable_interfaces(){
 
   
   sudo sed -i 's/^dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/firmware/config.txt
+  sudo raspi-config nonint do_i2c 0
   
   print_success "I2C Interface armed.\n"
 
