@@ -14,7 +14,7 @@
 - **Drive Reusability**: Instead of having to buy a new external hard drive, pop in any M.2 storage mediums, saving both money and the planet.
 - **SMB support**: Allows for the device to function as a miniature Network attached storage device on a network
 - **Secure**: Data on the device is secured by a user-defined password
-- **Open Source**: SkyDrive is under the [] License, so modify it as you see fit!
+- **Open Source**: SkyDrive is under an open-source license, so modify it as you see fit!
 
 # Table of Contents
 * [Overview](#)
