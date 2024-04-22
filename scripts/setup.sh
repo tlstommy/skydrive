@@ -126,7 +126,7 @@ enable_interfaces(){
   print_header "Arming I2C interface..."
 
   
-  sudo sed -i 's/^dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/config.txt
+  sudo sed -i 's/^dtparam=i2c_arm=.*/dtparam=i2c_arm=on/' /boot/firmware/config.txt
   
   print_success "I2C Interface armed.\n"
 
