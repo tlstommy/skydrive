@@ -22,7 +22,6 @@
 * [WebUI](#webui)
 * [Parts List](#parts-list)
    * [3D Printed Casing](#3d-printed-casing)
-* [Assembly](#skydrive-assembly)
 * [Issues & Suggestions](#issues--suggestions)
 
 
@@ -65,20 +64,6 @@ Skydrive can also be run without batteries or an ups hat, like a mini NAS server
 - Layer Height: 0.15mm
 - Infill: 10%-15%
 - Supports: Baseplate
-
-# SkyDrive Assembly
-
-Assembling SkyDrive is a straightforward process that can be completed in x simple steps.
-
-**You will need the following materials:**
-- (2) Standoffs
-- (2) Screws
-  
-### Step 1:
-
-### Step 2: 
-
-### Step 3: 
 
 
 # Issues & Suggestions
