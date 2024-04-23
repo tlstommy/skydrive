@@ -21,15 +21,14 @@ class PowerManager:
             print('Error :',e)
             self.i2c_error = True
         self.i2c_bus_address = target_address
-        self.i2c_bus_address = voltage_cutoff
-        
+        self.low_voltage_cutoff = voltage_cutoff
         
         
 
     def get_battery_voltage(self):
         if self.i2c_error:
+            print("i2c error: voltage")
             return -1
-
         read = self.i2c_bus.read_word_data(self.i2c_bus_address, 2)
         swapped = struct.unpack("<H", struct.pack(">H", read))[0]
         bat_voltage = (((swapped * 1.25) / 1000) / 16)
@@ -37,6 +36,7 @@ class PowerManager:
     
     def get_battery_capacity(self):
         if self.i2c_error:
+            print("i2c error: batterry")
             return -1
 
         read = self.i2c_bus.read_word_data(self.i2c_bus_address, 4)

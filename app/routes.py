@@ -13,6 +13,7 @@ import os,subprocess,json,random,time
 LOW_VOLTAGE_CUTOFF = 3.20
 PATH = os.path.dirname(os.path.dirname(__file__))
 
+
 #routes for requests and such
 file_handler = FileHandler(app.config['DEVICE_FILES_FOLDER'])
 power_manager = PowerManager(1,0x36,LOW_VOLTAGE_CUTOFF)
@@ -33,8 +34,6 @@ def load_settings():
     
     with open(os.path.join(PATH,"config/settings.json")) as jf:
         settings_data = json.load(jf)
-
-        print(settings_data.get("pcie_gen3_mode"))
         return [settings_data.get("pcie_gen3_mode"),settings_data.get("require_pass"),settings_data.get("apmode")]
         
 
@@ -70,6 +69,7 @@ def size(size):
 
 @app.route('/secure-page')
 def secure_page():
+    session['authenticated'] = False 
     if app.config['REQUIRE_AUTH']:
         if not session.get('authenticated'):
             return redirect(url_for('login'))
@@ -192,15 +192,15 @@ def preview_file():
     return resp
 
 #settings/help page
+@app.route('/secure-page')
 @app.route("/settings", methods=['GET','POST'])
 def settings():
-    print(session.get('authenticated'))
     if app.config['REQUIRE_AUTH']:
         if not session.get('authenticated'):
             return redirect(url_for('login'))
 
 
-    print("req ",request.form)
+    print("/settings request form ",request.form)
 
     #power settings pressed check
     if(request.form.get('settings-power-restart') == 'restart'):
@@ -225,7 +225,6 @@ def settings():
 
 @app.route("/get_bat_info", methods=['GET'])
 def get_power_info():
-
     try:
         return jsonify({
             "voltage":power_manager.get_battery_voltage(),
@@ -244,7 +243,7 @@ def get_settings():
 
 @app.route("/set_settings", methods=['POST'])
 def set_settings():
-    print(request.form)
+    print("/set_settings request.form ",request.form)
     
     # Check if 'pcieMode' is present in the request and handle it
     if 'pcieMode' in request.form:
