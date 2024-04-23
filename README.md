@@ -49,7 +49,14 @@ Upon completion, SkyDrive will start and be accessible on the web at the Raspber
 
 # Parts List
 
-SkyDrive was designed to work with a Raspberry Pi 5 due to the fast speeds of the PCIe and WIFI adapter and should be compatible with any NVME drive connected over the Pi's PCIe lanes. 
+SkyDrive was designed to work with a Raspberry Pi 5 due to the fast speeds of the PCIe and WIFI adapter and should be compatible with any NVMe drive connected over the Pi's PCIe lanes. 
+
+Our picture build contains 3 main parts.
+1. [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/)
+2. [X1001 PCIe to M.2 Key-M NVMe SSD PIP TOP](https://geekworm.com/products/x1001)
+3. [X1202 4-Cell 18650 5.1V 5A UPS HAT](https://geekworm.com/products/x1202)
+
+Skydrive can also be run without batteries or an ups hat, like a mini NAS server.
 
 ### 3D Printed Casing
 
