@@ -29,7 +29,7 @@ make_venv(){
   chmod -R 777 $currentDir/.venv > /dev/null &
   print_header "Installing python packages."
   sudo /usr/bin/python3 -m pip install -r requirements.txt --break-system-packages > /dev/null &
-  sudo apt-get install -y sysvbanner > /dev/null
+  sudo apt-get install -y sysvbanner > /dev/null 
   show_loader "   Installing packages...    "
 
 }
@@ -193,7 +193,7 @@ password_set(){
     password_file="$currentDir/config/pass"
    
 
-    # Prompt for the password
+    #prompt for the password
     echo -n "Enter a password: "
     read -s password
     echo
@@ -204,23 +204,21 @@ password_set(){
       continue
     fi
 
-    # Prompt for the password again for confirmation
+    #prompt for the password confirmation
     echo -n "Confirm password: "
     read -s password_confirm
     echo
 
-    echo $password
-    echo $password_confirm
+    
 
-    # Check if passwords match
+    #check if passwords match
     if [ "$password" != "$password_confirm" ]; then
       print_warn "Passwords do not match! Please try again."
       sleep 2
 
-    
  
     else
-      # Save the password to the specified file
+      #save the password
       echo "$password" > "$password_file"
 
       print_success "Password has been set!"
@@ -359,6 +357,7 @@ detect_i2c_device(){
   else
       #i2c 36 is found so continue
       echo "$output"
+      print_success "i2c detected!"
       
   fi
 
@@ -487,7 +486,16 @@ if [ "$currentFolder" == "scripts" ]; then
   cd ..
   currentDir=$(pwd)
   currentWorkingDir=$(pwd)
+elif [ "$currentFolder" == "skydrive" ]; then
+  currentDir=$(pwd)
+  currentWorkingDir=$(pwd)
 fi
+
+
+
+echo $currentDir
+echo $currentFolder
+echo $currentWorkingDir
 
 #run setup already check here
 alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
@@ -526,7 +534,6 @@ detect_i2c_device
 create_settings_config
 
 check_and_mount_nvme_drive
-
 
 
 # Create the log file
