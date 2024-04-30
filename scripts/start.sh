@@ -7,6 +7,10 @@ echo $pids
 currentDir=$(pwd)
 currentFolder=${PWD##*/} 
 
+gnu_notice(){
+  echo -e "SkyDrive Copyright (C) 2024 Thomas Logan Smith\nThis program comes with ABSOLUTELY NO WARRANTY;\nThis is free software, and you are welcome to redistribute it\nunder certain conditions.\n"
+}
+
 # do a sudo check!
 if [ "$EUID" -ne 0 ]; then
   echo -e "\n[ERROR]: The SkyDrive start script requires root privileges. Please run it with sudo.\n"

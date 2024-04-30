@@ -377,7 +377,6 @@ resume_prompt(){
 
 opening_prompt(){
   while true; do
-    clear
     print_header "Current Directory: $currentWorkingDir"
     print_bold "\nThis script will install all the required packages and setup SkyDrive!\n"
     print_underline "$(print_bold "It will do the following:\n")"
@@ -402,8 +401,13 @@ opening_prompt(){
     else
         print_error "Invalid input! Please try again."
         sleep 1
+        clear
     fi
   done
+}
+
+gnu_notice(){
+  echo -e "SkyDrive Copyright (C) 2024 Thomas Logan Smith\nThis program comes with ABSOLUTELY NO WARRANTY;\nThis is free software, and you are welcome to redistribute it\nunder certain conditions.\n"
 }
 
 show_loader(){
@@ -508,6 +512,8 @@ if [ -e "$alreadyRanFlagFile" ]; then
 else
 
   #it hasnt
+  gnu_notice
+  sleep(3)
   echo "The file does not exist."
   opening_prompt
   
