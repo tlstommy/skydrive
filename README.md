@@ -1,8 +1,14 @@
 <h2 align="center" style="border:none">
   SkyDrive - A Wireless Portable Storage Device
-  <h6 align="center" style="color: gray;">
+   <h5 align="center" style="color: gray;">
     University of Tennessee - 2024 Senior Design
+    
+  </h5>
+  <h6 align="center" style="color: gray;">
+    
+    
   </h6>
+  
 </h2>
 
 -----
@@ -11,7 +17,7 @@
 
 **Features:**
 - **Web UI**: A built-in interface to control SkyDrive and manage your data over the network.
-- **Drive Reusability**: Instead of having to buy a new external hard drive, pop in any M.2 storage mediums, saving both money and the planet.
+- **Drive Reusability**: Instead of buying a new external hard drive, pop in any M.2 storage mediums, saving both money and the planet.
 - **SMB support**: Allows for the device to function as a miniature Network attached storage device on a network
 - **Secure**: Data on the device is secured by a user-defined password
 - **Open Source**: SkyDrive is under an open-source license, so modify it as you see fit!
@@ -59,6 +65,7 @@ Skydrive can also be run without batteries or an ups hat, like a mini NAS server
 
 ### 3D Printed Casing
 
+This repository contains files for a 3D printable case for SkyDrive. They're located in the `STL` folder.
 
 #### Recommended Printing Settings
 - Layer Height: 0.15mm
@@ -66,8 +73,9 @@ Skydrive can also be run without batteries or an ups hat, like a mini NAS server
 - Supports: Baseplate
 
 
+
 # Issues & Suggestions
-If you encounter any issues or have any suggestions, please submit them through the [GitHub Issues](https://github.com/tlstommy/skydrive/issues) page. Your feedback is greatly appreciated!
+If you encounter any issues or have suggestions, please submit them through the [GitHub Issues](https://github.com/tlstommy/skydrive/issues) page. Your feedback is greatly appreciated!
 
 
 
