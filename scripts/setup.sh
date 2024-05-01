@@ -569,7 +569,7 @@ banner "SkyDrive"
 print_success "$(print_bold "SkyDrive has been successfully installed!")"
 
 print_header "Helpful Info:"
-echo "  [•] A"
+echo "  [•] You can fully shut off SkyDrive by quickly pressing the PSW button three times. Press it once to power off the Pi"
 echo "  [•] Have an issue or suggestion? Please, submit it here!"
 echo -e "      https://github.com/tlstommy/SkyDrive/issues\n"
 
