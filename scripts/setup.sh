@@ -111,6 +111,13 @@ check_and_mount_nvme_drive(){
 
 
 enable_interfaces(){
+
+
+  echo "Enabling interfaces..."
+
+  #install i2c tools if its not already installed.
+  sudo apt-get install -y i2c-tools > /dev/null
+
   #enable pcie connector
   print_header "Enabling PCI-E lanes..."
 
@@ -378,8 +385,8 @@ resume_prompt(){
 opening_prompt(){
   while true; do
     print_header "Current Directory: $currentWorkingDir"
-    print_bold "\nThis script will install all the required packages and setup SkyDrive!\n"
-    print_underline "$(print_bold "It will do the following:\n")"
+    print_bold "This script will install all the required packages and setup SkyDrive!\n"
+    print_underline "$(print_bold "It will do the following:")"
     echo "   [•] Set the hostname to 'Skydrive'."
     echo "   [•] Setup bonjour."
     echo "   [•] Create a log file."
@@ -407,7 +414,8 @@ opening_prompt(){
 }
 
 gnu_notice(){
-  echo -e "SkyDrive Copyright (C) 2024 Thomas Logan Smith\nThis program comes with ABSOLUTELY NO WARRANTY;\nThis is free software, and you are welcome to redistribute it\nunder certain conditions.\n"
+  clear
+  echo -e "\nSkyDrive Copyright (C) 2024 Thomas Logan Smith\nThis program comes with ABSOLUTELY NO WARRANTY;\nThis is free software, and you are welcome to redistribute it\nunder certain conditions.\n"
 }
 
 show_loader(){
@@ -496,11 +504,6 @@ elif [ "$currentFolder" == "skydrive" ]; then
 fi
 
 
-
-echo $currentDir
-echo $currentFolder
-echo $currentWorkingDir
-
 #run setup already check here
 alreadyRanFlagFile="$currentDir/config/ranPart1.setup"
 
@@ -513,8 +516,8 @@ else
 
   #it hasnt
   gnu_notice
-  sleep(3)
-  echo "The file does not exist."
+  sleep 3
+  
   opening_prompt
   
   enable_interfaces

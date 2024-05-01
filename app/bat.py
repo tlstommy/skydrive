@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #This python script is only suitable for UPS Shield X1200, X1201 and X1202
 
 import struct

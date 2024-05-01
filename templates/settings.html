@@ -47,9 +47,9 @@
                 <hr>
                 <form method="post" enctype=multipart/form-data id="settings-form">
                     
-                    <div class='w-1/2'>
+                    <div class=''>
                         <b>Power</b>
-                        <hr>
+                        
                         <div>
                             <button class="border-2 p-2 mt-2 mr-4" id="powerButtonShutdown" type="submit" name="settings-power-shutdown" value="shutdown">
                                 Shutdown Device
@@ -60,9 +60,9 @@
                         </div>  
                     </div>
                     <br>
-                    <div class='w-1/2'>
+                    <div class=''>
                         <b>General</b>
-                        <hr>
+                        
                         <div>
                             <div>
                                 <label class="switch">
@@ -102,24 +102,24 @@
                                 <tbody>
                                 
                                     <tr>
-                                        <td>CPU Temperature</td>
-                                        <td>{{ cpuTemp }} &#176; C</td>
+                                        <td><b>CPU Temperature</b></td>
+                                        <td><code>{{ cpuTemp }} &#176; C</code></td>
                                     </tr>
                                     <tr>
-                                        <td>GPU Temperature</td>
-                                        <td>{{ gpuTemp }} &#176; C</td>
+                                        <td><b>GPU Temperature</b></td>
+                                        <td><code>{{ gpuTemp }} &#176; C</code></td>
                                     </tr>
                                     <tr>
-                                        <td>SSD Storage Space</td>
-                                        <td>{{ usedBytes }} / {{ totalBytes }}  ({{ usagePercent }}%)</td>
+                                        <td><b>SSD Storage Space</b></td>
+                                        <td><code>{{ usedBytes }} / {{ totalBytes }}  ({{ usagePercent }}%)</code></td>
                                     </tr>
                                     <tr>
-                                        <td>Battery Capacity</td>
-                                        <td>{{ batCap }} %</td>
+                                        <td><b>Battery Capacity</b></td>
+                                        <td><code>{{ batCap }} %</code></td>
                                     </tr>
                                     <tr>
-                                        <td>Battery Voltage</td>
-                                        <td>{{ batVolt }} Volts</td>
+                                        <td><b>Battery Voltage</b></td>
+                                        <td><code>{{ batVolt }} Volts</code></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -130,8 +130,9 @@
                 
             </div>
 
-            <div class="file-details-section p-8 w-full border-l md:flex-1">
-                <h2 class='text-xl font-bold'>Help</h3>
+            <div class="file-details-section p-8 w-full md:flex-1">
+                <h3 class='text-xl font-bold'>Help</h3>
+                    
                 <hr style="margin-right: 20%;">
                 <div style="margin-right: 25%;">
                     <p>

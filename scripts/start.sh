@@ -37,5 +37,8 @@ else
   done
 fi
 
-echo "starting SkyDrive webserver!"
-sudo gunicorn -w 4 -t 4 -b 0.0.0.0:80 'app:app' --timeout 600
+#run pld script
+sudo /usr/bin/python app/power_low_detector.py > skydrive-pld.log &
+
+echo "starting SkyDrive webserver!" 
+sudo gunicorn -w 4 -t 4 -b 0.0.0.0:80 'app:app' --timeout 600 > skydrive-gun.log

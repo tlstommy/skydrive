@@ -13,6 +13,10 @@ header {
   background-color: #252525;
   border-bottom: 2px solid #010404;
   padding: 16px;
+  position: sticky;
+  top: 0; /* Align to the top of the viewport */
+  z-index: 1000; /* Ensure it stays above other content */
+
 }
 
 header h1,
@@ -87,7 +91,9 @@ button:hover,
   display: block;
   max-height: 24em;
   overflow-y: auto;
+  
 }
+
 
 /* Table header */
 
@@ -240,6 +246,14 @@ input:checked+.slider:before {
   background-color: #21262d;
   border-bottom: 1px solid #30363d;
   /* Slightly darker header background */
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 100; /* This ensures the header stays on top of other content when scrolling */
+  background-color: #444;
+  
 }
 
 /* nav stuff */

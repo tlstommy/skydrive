@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from app import app,auth
 from app.file_handler import FileHandler
 from app.power_manager import PowerManager

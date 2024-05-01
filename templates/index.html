@@ -17,7 +17,7 @@
 
 <body>
     <div class="min-h-screen flex flex-col">
-        <header class="border-b-2 p-4">
+        <header class="border-b-2 p-4 sticky">
             <div class="flex justify-between items-center">
                 <h1 class="text-2xl font-bold pl-4">SkyDrive</h1>
                 <div class="flex items-center">
@@ -71,7 +71,7 @@
                                     <th class="px-4 py-2 w-2"><input type="checkbox"
                                             class="filelist-checkbox-check-all h-4" id="filelist-check-all"></th>
 
-                                    <th class="py-2 w-1/2">Name</th>
+                                    <th class="py-2 px-4 w-1/2">Name</th>
                                     <th class="py-2 w-1/6">File Size</th>
                                     <th class="py-2 w-1/4">Last Modified</th>
                                 </tr>
@@ -85,7 +85,7 @@
                 </div>
                 <form method="post" enctype=multipart/form-data id="file-upload-form">
                     <div class="pt-4">
-
+                        <br><br>
                         <label id="upload-files-label" class="block mb-2 text-sm font-medium" for="multiple_files">
                             Upload file(s)
                         </label>
@@ -123,7 +123,7 @@
                 </form>
             </div>
 
-            <div class="file-details-section p-8 w-full border-l md:flex-1">
+            <div class="file-details-section p-8 w-full md:flex-1">
                 
                 <h3 class='font-bold my-2 mb-2'>File Details</h3>
                 
@@ -465,24 +465,24 @@
 
                         if (file.is_directory) {
                             row.innerHTML = `
-                                <th class="px-4 py-2 w-2 filelist-checkbox folder">
-                                    <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill=#a1a1ff viewBox="0 0 24 24">
+                                <th class="px-4 py-2 w-2 mx-4 filelist-checkbox folder">
+                                    <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill=#a1a1ff viewBox="3 0 24 24">
                                         <path fill-rule="evenodd" d="M5 4a2 2 0 0 0-2 2v1h10.968l-1.9-2.28A2 2 0 0 0 10.532 4H5ZM3 19V9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Zm11.707-7.707a1 1 0 0 0-1.414 1.414l.293.293H8a1 1 0 1 0 0 2h5.586l-.293.293a1 1 0 0 0 1.414 1.414l2-2a1 1 0 0 0 0-1.414l-2-2Z" clip-rule="evenodd"/>
                                         </svg>
                                 </th>
-                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
+                                <td class="file-name-col pl-4 text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
                                 <td class="file-size-col py-2 w-1/6">${file.size}</td>
-                                <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
+                                <td class="file-moddate-col py-2 w-1/4">${(file.last_modified.split(":")[0]).split(" ")[0]} ${parseInt((file.last_modified.split(":")[0]).split(" ")[1]) < 12 ? parseInt((file.last_modified.split(":")[0]).split(" ")[1]) : parseInt((file.last_modified.split(":")[0]).split(" ")[1]) - 12 }:${file.last_modified.split(":")[1]} ${file.last_modified.split(":")[0] > 11 ? "am" : "pm"}</td>
                             `;
                         } else {
                             row.innerHTML = `
-                                <th class="px-4 py-2 w-2"><input type="checkbox" name="Select File" class="filelist-checkbox h-4"></th>
-                                <td class="file-name-col text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
+                                <th class="px-4 py-2 w-2 mx-4"><input type="checkbox" name="Select File" class="filelist-checkbox h-4"></th>
+                                <td class="file-name-col pl-4 pr-2 text-nowrap text-left py-2 text-clip overflow-hidden truncate ... w-1/2" title="${file.name}">${file.name.length > 32 ? file.name.substring(0, 29) + "..." : file.name}</td>
                                 <td class="file-size-col py-2 w-1/6">${file.size}</td>
-                                <td class="file-moddate-col py-2 w-1/4">${file.last_modified}</td>
+                                <td class="file-moddate-col py-2 w-1/4">${(file.last_modified.split(":")[0]).split(" ")[0]} ${parseInt((file.last_modified.split(":")[0]).split(" ")[1]) < 12 ? parseInt((file.last_modified.split(":")[0]).split(" ")[1]) : parseInt((file.last_modified.split(":")[0]).split(" ")[1]) - 12 }:${file.last_modified.split(":")[1]} ${file.last_modified.split(":")[0] > 11 ? "am" : "pm"}</td>
                             `;
                         }
-
+                        
                         fileListElement.appendChild(row);
                         if (file.is_directory) {
                             row.addEventListener('click', () => {
