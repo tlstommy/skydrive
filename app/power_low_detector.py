@@ -13,7 +13,7 @@ power_manager = PowerManager(1,0x36,LOW_VOLTAGE_CUTOFF)
 def shutdown():
     print("Powering off...")
     
-    call("sudo nohup shutdown -h now", shell=True)
+    #call("sudo nohup shutdown -h now", shell=True)
 
 
 while True:
