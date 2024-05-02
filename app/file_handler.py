@@ -1,13 +1,25 @@
 #!/usr/bin/env python
 
+#file_handler - handles all file operations for the device
+#Copyright (C) 2024 Thomas Logan Smith
+
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import os, datetime
-#from hurry.filesize import size
 from werkzeug.utils import secure_filename
 from flask import send_from_directory,send_file,jsonify
 import zipfile
 import mimetypes
-
-
 
 
 #file ops
@@ -17,7 +29,7 @@ class FileHandler:
         mimetypes.init()
 
 
-    #fucntion to clac size instead of hurry.filesize cred so
+    #function to clac size instead of hurry.filesize cred so
     def size(self,size):
         for unit in ("", "K", "M", "G", "T"):
             if abs(size) < 1024.0:

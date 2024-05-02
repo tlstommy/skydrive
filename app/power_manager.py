@@ -1,7 +1,21 @@
 #!/usr/bin/env python
 
-import struct
+#power_manager - power mangement program for geekworm x1202 i2c psu
+#Copyright (C) 2024 Thomas Logan Smith
 
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License.
+#
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import struct
 import time
 from subprocess import call
 
@@ -11,8 +25,6 @@ try:
 except ImportError as e:
     print("ImportError: ",e)
     
-
-#power-management driver program for geekworm x1202
 
 class PowerManager:
     def __init__(self,bus,target_address,voltage_cutoff):
